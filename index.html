@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana Full Stack Finance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --solana-purple: #9945FF;
+            --solana-teal: #14F195;
+            --solana-dark: #0D0D0D;
+            --solana-gray: #1A1A1A;
+            --solana-light-gray: #2A2A2A;
+            --gradient-main: linear-gradient(135deg, #9945FF 0%, #14F195 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--solana-dark);
+            color: #FFFFFF;
+            min-height: 100vh;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--solana-teal);
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            font-weight: 700;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .header-subtitle {
+            font-size: 18px;
+            color: #888;
+            font-weight: 400;
+        }
+
+        .stack {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .layer {
+            background: var(--solana-gray);
+            border-radius: 16px;
+            padding: 32px 40px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .layer:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 60px rgba(153, 69, 255, 0.15);
+        }
+
+        .layer::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+
+        .layer-1::before { background: linear-gradient(180deg, #9945FF, #7B3FE4); }
+        .layer-2::before { background: linear-gradient(180deg, #7B3FE4, #5D39C9); }
+        .layer-3::before { background: linear-gradient(180deg, #5D39C9, #2BB78C); }
+        .layer-4::before { background: linear-gradient(180deg, #2BB78C, #14F195); }
+
+        .layer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .layer-number {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: #666;
+            letter-spacing: 1px;
+        }
+
+        .layer-title {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #FFF;
+        }
+
+        .layer-metric {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            color: var(--solana-teal);
+        }
+
+        .projects {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .project {
+            background: var(--solana-light-gray);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #E0E0E0;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .project:hover {
+            border-color: var(--solana-purple);
+            background: rgba(153, 69, 255, 0.1);
+            color: #FFF;
+        }
+
+        .project-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: contain;
+            background: #FFF;
+            padding: 2px;
+            flex-shrink: 0;
+        }
+
+        .project-logo-square {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            object-fit: contain;
+            background: #FFF;
+            padding: 3px;
+            flex-shrink: 0;
+        }
+
+        .logo-placeholder {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--solana-purple), var(--solana-teal));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: #FFF;
+            flex-shrink: 0;
+        }
+
+        .infrastructure {
+            margin-top: 40px;
+            padding: 24px 40px;
+            background: linear-gradient(90deg, rgba(153, 69, 255, 0.1) 0%, rgba(20, 241, 149, 0.1) 100%);
+            border: 1px solid #333;
+            border-radius: 12px;
+        }
+
+        .infrastructure .layer-title {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 16px;
+        }
+
+        .infrastructure .projects {
+            justify-content: center;
+        }
+
+        .infrastructure .project {
+            background: transparent;
+            border-color: #444;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-top: 48px;
+            padding-top: 48px;
+            border-top: 1px solid #222;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: #666;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid #222;
+        }
+
+        .footer-logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .footer-text {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: #555;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            .header h1 { font-size: 32px; }
+            .layer { padding: 24px; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-label">Institutional Infrastructure</div>
+            <h1>Full Stack Finance</h1>
+            <p class="header-subtitle">The complete capital markets stack, built on Solana</p>
+        </header>
+
+        <div class="stack">
+            <!-- LAYER 1: Stablecoins -->
+            <div class="layer layer-1">
+                <div class="layer-header">
+                    <div>
+                        <div class="layer-number">LAYER 01</div>
+                        <div class="layer-title">Stablecoins & Digital Cash</div>
+                    </div>
+                    <div class="layer-metric">$13.3B Market Cap</div>
+                </div>
+                <div class="projects">
+                    <div class="project">
+                        <img src="https://cryptologos.cc/logos/usd-coin-usdc-logo.png" alt="USDC" class="project-logo" onerror="this.style.display='none'">
+                        USDC
+                    </div>
+                    <div class="project">
+                        <img src="https://cryptologos.cc/logos/paypal-usd-pyusd-logo.png" alt="PYUSD" class="project-logo" onerror="this.style.display='none'">
+                        PYUSD
+                    </div>
+                    <div class="project">
+                        <img src="https://assets.coingecko.com/coins/images/29001/large/eurc.png" alt="EURC" class="project-logo" onerror="this.style.display='none'">
+                        EURC
+                    </div>
+                    <div class="project">
+                        <img src="https://assets.coingecko.com/coins/images/41315/large/GlobalDollar_Token_Icon.png" alt="USDG" class="project-logo" onerror="this.style.display='none'">
+                        USDG
+                    </div>
+                    <div class="project">
+                        <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT" class="project-logo" onerror="this.style.display='none'">
+                        USDT
+                    </div>
+                    <div class="project">
+                        <img src="https://cryptologos.cc/logos/first-digital-usd-fdusd-logo.png" alt="FDUSD" class="project-logo" onerror="this.style.display='none'">
+                        FDUSD
+                    </div>
+                    <div class="project">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Western_Union_Logo_2019.svg/200px-Western_Union_Logo_2019.svg.png" alt="USDPT" class="project-logo" onerror="this.style.display='none'">
+                        USDPT
+                    </div>
+                </div>
+            </div>
+
+            <!-- LAYER 2: Yield & Cash Management -->
+            <div class="layer layer-2">
+                <div class="layer-header">
+                    <div>
+                        <div class="layer-number">LAYER 02</div>
+                        <div class="layer-title">Yield & Cash Management</div>
+                    </div>
+                    <div class="layer-metric">$530M+ Tokenized Treasuries</div>
+                </div>
+                <div class="projects">
+                    <div class="project">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/BlackRock_wordmark.svg/200px-BlackRock_wordmark.svg.png" alt="BlackRock" class="project-logo-square" onerror="this.style.display='none'">
+                        BlackRock BUIDL
+                    </div>
+                    <div class="project">
+                        <img src="https://assets.coingecko.com/coins/images/26580/large/ONDO.png" alt="Ondo" class="project-logo" onerror="this.style.display='none'">
+                        Ondo USDY
+                    </div>
+                    <div class="project">
+                        <img src="https://assets.coingecko.com/coins/images/26580/large/ONDO.png" alt="Ondo" class="project-logo" onerror="this.style.display='none'">
+                        Ondo OUSG
+                    </div>
+                    <div class="project">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Franklin_Templeton_logo.svg/200px-Franklin_Templeton_logo.svg.png" alt="Franklin Templeton" class="project-logo-square" onerror="this.style.display='none'">
+                        Franklin BENJI
+                    </div>
+                    <div class="project">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Franklin_Templeton_logo.svg/200px-Franklin_Templeton_logo.svg.png" alt="Franklin Templeton" class="project-logo-square" onerror="this.style.display='none'">
+                        Franklin FOBXX
+                    </div>
+                    <div class="project">
+                        <img src="https://icons.llama.fi/openeden.jpg" alt="OpenEden" class="project-logo" onerror="this.style.display='none'">
+                        OpenEden TBILL
+                    </div>
+                    <div class="project">
+                        <img src="https://icons.llama.fi/superstate.png" alt="Superstate" class="project-logo" onerror="this.style.display='none'">
+                        Superstate USTB
+                    </div>
+                </div>
+            </div>
+
+            <!-- LAYER 3: Private Credit & Hedge Funds -->
+            <div class="layer layer-3">
+                <div class="layer-header">
+                    <div>
+                        <div class="layer-number">LAYER 03</div>
+                        <div class="layer-title">Private Credit & Hedge Funds</div>
+                    </div>
+                    <div class="layer-metric">$500M+ Institutional AUM</div>
+                </div>
+                <div class="projects">
+                    <div class="project">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Brevan_Howard_Logo.svg/200px-Brevan_Howard_Logo.svg.png" alt="Brevan Howard" class="project-logo-square" onerror="this.style.display='none'">
+                        Brevan Howard
+                    </div>
+                    <div class="project">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/0/06/Hamilton_Lane_logo.svg/200px-Hamilton_Lane_logo.svg.png" alt="Hamilton Lane" class="project-logo-square" onerror="this.style.display='none'">
+                        Hamilton Lane
+                    </div>
+                    <div class="project">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Apollo_Global_Management_logo.svg/200px-Apollo_Global_Management_logo.svg.png" alt="Apollo" class="project-logo-square" onerror="this.style.display='none'">
+                        Apollo
+                    </div>
+                    <div class="project">
+                        <img src="https://icons.llama.fi/simplify.png" alt="Simplify" class="project-logo" onerror="this.style.display='none'">
+                        Simplify T12
+                    </div>
+                    <div class="project">
+                        <img src="https://icons.llama.fi/superstate.png" alt="Superstate" class="project-logo" onerror="this.style.display='none'">
+                        Superstate Carry
+                    </div>
+                    <div class="project">
+                        <img src="https://assets.coingecko.com/coins/images/14097/large/maple.png" alt="Maple Finance" class="project-logo" onerror="this.style.display='none'">
+                        Maple Finance
+                    </div>
+                </div>
+            </div>
+
+            <!-- LAYER 4: Alternatives -->
+            <div class="layer layer-4">
+                <div class="layer-header">
+                    <div>
+                        <div class="layer-number">LAYER 04</div>
+                        <div class="layer-title">Alternatives</div>
+                    </div>
+                    <div class="layer-metric">$682M+ Tokenized Assets</div>
+                </div>
+                <div class="projects">
+                    <div class="project">
+                        <img src="https://icons.llama.fi/backed.png" alt="Backed" class="project-logo" onerror="this.style.display='none'">
+                        xStocks by Backed
+                    </div>
+                    <div class="project">
+                        <img src="https://assets.coingecko.com/coins/images/26580/large/ONDO.png" alt="Ondo" class="project-logo" onerror="this.style.display='none'">
+                        Ondo Global Markets
+                    </div>
+                    <div class="project">
+                        <img src="https://assets.coingecko.com/coins/images/36600/large/parcl.png" alt="Parcl" class="project-logo" onerror="this.style.display='none'">
+                        Parcl
+                    </div>
+                    <div class="project">
+                        <img src="https://icons.llama.fi/homebase.png" alt="Homebase" class="project-logo" onerror="this.style.display='none'">
+                        Homebase
+                    </div>
+                    <div class="project">
+                        <div class="logo-placeholder" style="background: #DC2626;">$T</div>
+                        Bhutan $TER
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Infrastructure Rail -->
+        <div class="infrastructure">
+            <div class="layer-title">Settlement & Infrastructure Rail</div>
+            <div class="projects">
+                <div class="project">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/200px-Visa_Inc._logo.svg.png" alt="Visa" class="project-logo-square" onerror="this.style.display='none'">
+                    Visa Settlement
+                </div>
+                <div class="project">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/R3_company_logo.svg/200px-R3_company_logo.svg.png" alt="R3" class="project-logo-square" onerror="this.style.display='none'">
+                    R3 Corda
+                </div>
+                <div class="project">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/200px-Stripe_Logo%2C_revised_2016.svg.png" alt="Stripe" class="project-logo-square" onerror="this.style.display='none'">
+                    Stripe
+                </div>
+                <div class="project">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Circle_USDC_Logo.svg/200px-Circle_USDC_Logo.svg.png" alt="Circle" class="project-logo" onerror="this.style.display='none'">
+                    Circle
+                </div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">$1B+</div>
+                <div class="stat-label">RWA TVL</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">50K+</div>
+                <div class="stat-label">TPS Capacity</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">&lt;1s</div>
+                <div class="stat-label">Finality</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">$0.001</div>
+                <div class="stat-label">Median Tx Cost</div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-logo">SOLANA</div>
+            <div class="footer-text">Data as of January 2026</div>
+        </footer>
+    </div>
+</body>
+</html>
