@@ -106,7 +106,7 @@
             color: var(--solana-teal);
         }
 
-        .projects { display: flex; flex-wrap: wrap; gap: 8px; }
+        .projects { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
 
         a.project {
             text-decoration: none;
@@ -126,7 +126,7 @@
             align-items: center;
             gap: 10px;
             position: relative;
-            flex: 0 0 auto;
+            min-width: 0;
         }
 
         .project:hover {
