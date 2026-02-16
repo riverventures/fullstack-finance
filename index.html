@@ -1,1328 +1,249 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tokenize on Solana | Institutional Infrastructure</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --bg-primary: #0D0D0D;
-            --bg-secondary: #1A1A1A;
-            --bg-tertiary: #2A2A2A;
-            --solana-purple: #9945FF;
-            --solana-green: #14F195;
-            --text-primary: #FFFFFF;
-            --text-secondary: #B3B3B3;
-            --text-muted: #808080;
-            --border-color: #333333;
-            --hover-bg: #1F1F1F;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
-            font-weight: 600;
-            line-height: 1.2;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .section {
-            padding: 80px 0;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            text-align: center;
-            background: linear-gradient(135deg, var(--solana-purple), var(--solana-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .section-subtitle {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            text-align: center;
-            margin-bottom: 3rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            position: relative;
-            background: linear-gradient(135deg, 
-                rgba(153, 69, 255, 0.05) 0%, 
-                rgba(13, 13, 13, 1) 50%, 
-                rgba(20, 241, 149, 0.05) 100%);
-            animation: gradientShift 10s ease-in-out infinite alternate;
-        }
-
-        @keyframes gradientShift {
-            0% {
-                background: linear-gradient(135deg, 
-                    rgba(153, 69, 255, 0.05) 0%, 
-                    rgba(13, 13, 13, 1) 50%, 
-                    rgba(20, 241, 149, 0.05) 100%);
-            }
-            100% {
-                background: linear-gradient(135deg, 
-                    rgba(20, 241, 149, 0.05) 0%, 
-                    rgba(13, 13, 13, 1) 50%, 
-                    rgba(153, 69, 255, 0.05) 100%);
-            }
-        }
-
-        .hero-content {
-            text-align: center;
-            z-index: 2;
-        }
-
-        .hero h1 {
-            font-size: clamp(3rem, 8vw, 5rem);
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--text-primary), var(--solana-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-subtitle {
-            font-size: 1.5rem;
-            color: var(--text-secondary);
-            margin-bottom: 3rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .stats-bar {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-            margin-top: 4rem;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-
-        .stat-item:hover {
-            transform: translateY(-2px);
-            border-color: var(--solana-purple);
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--solana-green);
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
-        }
-
-        /* Why Solana Section */
-        .why-solana {
-            background: var(--bg-secondary);
-        }
-
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .benefit-card {
-            padding: 2rem;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            background: var(--bg-primary);
-            transition: all 0.3s ease;
-        }
-
-        .benefit-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--solana-purple);
-            box-shadow: 0 10px 40px rgba(153, 69, 255, 0.1);
-        }
-
-        .benefit-icon {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--solana-purple), var(--solana-green));
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .benefit-title {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        .benefit-description {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        /* Three Layers Section */
-        .layers {
-            background: var(--bg-primary);
-        }
-
-        .layers-container {
-            position: relative;
-            margin-top: 4rem;
-        }
-
-        .layer {
-            margin-bottom: 2rem;
-            padding: 2.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            background: linear-gradient(135deg, rgba(153, 69, 255, 0.02), rgba(20, 241, 149, 0.02));
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .layer:hover {
-            transform: translateX(10px);
-            border-color: var(--solana-purple);
-        }
-
-        .layer-number {
-            position: absolute;
-            top: -15px;
-            left: 30px;
-            background: var(--solana-purple);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .layer-title {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-            padding-left: 20px;
-        }
-
-        .layer-features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .layer-feature {
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 8px;
-            border-left: 3px solid var(--solana-green);
-        }
-
-        .feature-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .feature-description {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .layer-partners {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .partners-label {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-        }
-
-        .partners-list {
-            color: var(--solana-green);
-            font-weight: 500;
-        }
-
-        /* Asset Ecosystem */
-        .ecosystem {
-            background: var(--bg-secondary);
-        }
-
-        .ecosystem-layers {
-            margin-top: 3rem;
-        }
-
-        .ecosystem-layer {
-            margin-bottom: 3rem;
-            padding: 2rem;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            background: var(--bg-primary);
-        }
-
-        .ecosystem-layer-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .ecosystem-layer-title {
-            font-size: 1.5rem;
-            color: var(--text-primary);
-        }
-
-        .ecosystem-layer-value {
-            font-size: 1.2rem;
-            color: var(--solana-green);
-            font-weight: 700;
-        }
-
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .project-card {
-            padding: 1.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            background: var(--bg-secondary);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .project-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--solana-purple);
-            box-shadow: 0 8px 25px rgba(153, 69, 255, 0.15);
-        }
-
-        .project-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .project-logo {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            object-fit: cover;
-            background: var(--bg-tertiary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.8rem;
-            color: var(--text-primary);
-        }
-
-        .project-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .project-name:hover {
-            color: var(--solana-purple);
-        }
-
-        .project-description {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            flex-grow: 1;
-        }
-
-        .project-links {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .project-link {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: color 0.3s ease;
-        }
-
-        .project-link:hover {
-            color: var(--solana-green);
-        }
-
-        .twitter-icon {
-            width: 16px;
-            height: 16px;
-            fill: var(--text-muted);
-            transition: fill 0.3s ease;
-        }
-
-        .twitter-icon:hover {
-            fill: var(--solana-green);
-        }
-
-        /* Case Studies */
-        .case-studies {
-            background: var(--bg-primary);
-        }
-
-        .cases-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .case-card {
-            padding: 2rem;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            background: linear-gradient(135deg, rgba(153, 69, 255, 0.03), rgba(20, 241, 149, 0.03));
-            transition: all 0.3s ease;
-        }
-
-        .case-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--solana-green);
-            box-shadow: 0 12px 30px rgba(20, 241, 149, 0.1);
-        }
-
-        .case-company {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--solana-green);
-            margin-bottom: 1rem;
-        }
-
-        .case-description {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        /* FAQ Section */
-        .faq {
-            background: var(--bg-secondary);
-        }
-
-        .faq-list {
-            margin-top: 3rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .faq-item {
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            background: var(--bg-primary);
-            overflow: hidden;
-        }
-
-        .faq-item details {
-            cursor: pointer;
-        }
-
-        .faq-item summary {
-            padding: 1.5rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            list-style: none;
-            position: relative;
-        }
-
-        .faq-item summary:hover {
-            background: var(--hover-bg);
-            color: var(--solana-purple);
-        }
-
-        .faq-item summary::after {
-            content: "+";
-            position: absolute;
-            right: 1.5rem;
-            font-size: 1.5rem;
-            color: var(--solana-purple);
-            transition: transform 0.3s ease;
-        }
-
-        .faq-item[open] summary::after {
-            transform: rotate(45deg);
-        }
-
-        .faq-answer {
-            padding: 0 1.5rem 1.5rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--bg-primary);
-            padding: 3rem 0;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 2rem;
-        }
-
-        .footer-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--solana-purple);
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .footer-link {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.3s ease;
-        }
-
-        .footer-link:hover {
-            color: var(--solana-green);
-        }
-
-        .footer-note {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-top: 2rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .section {
-                padding: 60px 0;
-            }
-
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero-subtitle {
-                font-size: 1.2rem;
-            }
-
-            .stats-bar {
-                gap: 1rem;
-            }
-
-            .stat-item {
-                min-width: 150px;
-            }
-
-            .section-title {
-                font-size: 2rem;
-            }
-
-            .layer {
-                padding: 1.5rem;
-            }
-
-            .layer-features {
-                grid-template-columns: 1fr;
-            }
-
-            .projects-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .cases-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-
-        /* Print Styles */
-        @media print {
-            .hero {
-                background: none;
-                min-height: auto;
-                padding: 2rem 0;
-            }
-
-            .section {
-                padding: 2rem 0;
-            }
-
-            .project-card,
-            .benefit-card,
-            .case-card,
-            .layer {
-                break-inside: avoid;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Every Asset. Every Market. One Network.</h1>
-                <p class="hero-subtitle">The institutional infrastructure for tokenized assets on Solana</p>
-                
-                <div class="stats-bar">
-                    <div class="stat-item">
-                        <span class="stat-value">$14B+</span>
-                        <span class="stat-label">Stablecoin Supply</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value">$10T+</span>
-                        <span class="stat-label">Stablecoin Transactions (2025)</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value">&lt;1s</span>
-                        <span class="stat-label">Finality</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value">$0.001</span>
-                        <span class="stat-label">Median Tx</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value">50K+</span>
-                        <span class="stat-label">TPS</span>
-                    </div>
-                </div>
-            </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Fullstack Finance maps the Solana finance stack into institutional-grade building blocks for portfolio managers, custodians, and compliance teams."
+    />
+    <title>Fullstack Finance | Institutional Solana Infrastructure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header class="topbar" aria-label="Primary navigation">
+      <div class="brand-wrap">
+        <div class="brand-mark" aria-hidden="true">FF</div>
+        <div>
+          <p class="brand-title">Fullstack Finance</p>
+          <p class="brand-subtitle">Institutional Solana Stack</p>
         </div>
-    </section>
+      </div>
+      <nav>
+        <ul class="nav-list">
+          <li><a href="#features">Capabilities</a></li>
+          <li><a href="#docs">Documentation</a></li>
+          <li><a href="#contributors">Contributors</a></li>
+          <li><a href="#footer">Compliance</a></li>
+        </ul>
+      </nav>
+    </header>
 
-    <!-- Why Solana Section -->
-    <section class="section why-solana">
-        <div class="container">
-            <h2 class="section-title">The Performance Advantage</h2>
-            <p class="section-subtitle">Public liquidity with institutional control — not a private chain, not an L2</p>
-            
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <div class="benefit-icon">⚡</div>
-                    <h3 class="benefit-title">Production Performance</h3>
-                    <p class="benefit-description">4,500 TPS in production with 400ms confirmation and $0.0002 median fees. Alpenglow upgrade delivers 150ms deterministic finality (2026).</p>
-                </div>
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon">🛡</div>
-                    <h3 class="benefit-title">Localized Fee Markets</h3>
-                    <p class="benefit-description">Congestion in one application never impacts another. During October 2025 stress test: ETH gas hit 450 Gwei, Solana stayed under 1 cent.</p>
-                </div>
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon">💧</div>
-                    <h3 class="benefit-title">$100B+ Public Liquidity</h3>
-                    <p class="benefit-description">Composable DeFi ecosystem with institutional-grade applications. Access the deepest on-chain liquidity pools.</p>
-                </div>
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon">🔧</div>
-                    <h3 class="benefit-title">Developer Ecosystem Leader</h3>
-                    <p class="benefit-description">Surpassed Ethereum in developer growth (Electric Capital report). Mature tooling, extensive documentation, active community.</p>
-                </div>
-            </div>
+    <div class="layout-shell">
+      <aside id="contributors" class="sidebar" aria-label="Contributors sidebar">
+        <div class="sidebar-card">
+          <h2>Core Contributors</h2>
+          <p class="muted">Structured like a relationship-team panel inspired by Vanguard-style utility side navigation.</p>
+          <ul class="people-list">
+            <li>
+              <img loading="lazy" src="assets/avatar-amelia.svg" alt="Portrait illustration of Amelia Reed" />
+              <div>
+                <p class="person-name">Amelia Reed</p>
+                <p class="person-role">Frontend Architecture Lead</p>
+                <p class="person-bio">Design systems, accessibility governance, and web performance.</p>
+              </div>
+            </li>
+            <li>
+              <img loading="lazy" src="assets/avatar-marco.svg" alt="Portrait illustration of Marco Liang" />
+              <div>
+                <p class="person-name">Marco Liang</p>
+                <p class="person-role">Protocol Integration Engineer</p>
+                <p class="person-bio">Cross-chain interfaces and custody-grade API contracts.</p>
+              </div>
+            </li>
+            <li>
+              <img loading="lazy" src="assets/avatar-noor.svg" alt="Portrait illustration of Noor Patel" />
+              <div>
+                <p class="person-name">Noor Patel</p>
+                <p class="person-role">Risk & Controls Analyst</p>
+                <p class="person-bio">Control mapping, runbooks, and audit evidence workflows.</p>
+              </div>
+            </li>
+          </ul>
+          <a href="#top" class="back-top">Back to top ↑</a>
         </div>
-    </section>
+      </aside>
 
-    <!-- Three Layers Section -->
-    <section class="section layers">
-        <div class="container">
-            <h2 class="section-title">Three Layers of Institutional Control</h2>
-            <p class="section-subtitle">Unprecedented compliance and control capabilities built into the protocol</p>
-            
-            <div class="layers-container">
-                <div class="layer">
-                    <div class="layer-number">1</div>
-                    <h3 class="layer-title">Token Extensions (Protocol-Level)</h3>
-                    <div class="layer-features">
-                        <div class="layer-feature">
-                            <div class="feature-name">Transfer Hooks</div>
-                            <div class="feature-description">Real-time KYC/sanctions screening on every transfer</div>
-                        </div>
-                        <div class="layer-feature">
-                            <div class="feature-name">Allowlists</div>
-                            <div class="feature-description">Tokens frozen by default, only whitelisted addresses can hold</div>
-                        </div>
-                        <div class="layer-feature">
-                            <div class="feature-name">Confidential Transfers</div>
-                            <div class="feature-description">Encrypted balances with auditor keys for compliance</div>
-                        </div>
-                    </div>
-                    <div class="layer-partners">
-                        <div class="partners-label">Used by:</div>
-                        <div class="partners-list">PayPal (PYUSD), Paxos (USDP)</div>
-                    </div>
-                </div>
-                
-                <div class="layer">
-                    <div class="layer-number">2</div>
-                    <h3 class="layer-title">Validator Whitelisting (Network-Level)</h3>
-                    <div class="layer-features">
-                        <div class="layer-feature">
-                            <div class="feature-name">Institutional Validators</div>
-                            <div class="feature-description">Route transactions only to vetted institutional validators</div>
-                        </div>
-                        <div class="layer-feature">
-                            <div class="feature-name">Compliance Guarantees</div>
-                            <div class="feature-description">Ensure transactions are processed by regulated entities</div>
-                        </div>
-                    </div>
-                    <div class="layer-partners">
-                        <div class="partners-label">Partners:</div>
-                        <div class="partners-list">Helios, Binance, Figment, Galaxy, Everstake, Kraken</div>
-                    </div>
-                </div>
-                
-                <div class="layer">
-                    <div class="layer-number">3</div>
-                    <h3 class="layer-title">Contra (Private Execution)</h3>
-                    <div class="layer-features">
-                        <div class="layer-feature">
-                            <div class="feature-name">Private SVM Instance</div>
-                            <div class="feature-description">Fully private execution with cryptographic bridge to mainnet</div>
-                        </div>
-                        <div class="layer-feature">
-                            <div class="feature-name">Zero Fees & Instant Finality</div>
-                            <div class="feature-description">Full sovereignty with atomic DvP and PvP settlement</div>
-                        </div>
-                        <div class="layer-feature">
-                            <div class="feature-name">Private Lane Analogy</div>
-                            <div class="feature-description">"Private lane on the public highway" — best of both worlds</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="layer" style="background: linear-gradient(135deg, rgba(20, 241, 149, 0.03), rgba(153, 69, 255, 0.03));">
-                    <div class="layer-number" style="background: var(--solana-green);">+</div>
-                    <h3 class="layer-title">Kora Gas Abstraction</h3>
-                    <div class="layer-features">
-                        <div class="layer-feature">
-                            <div class="feature-name">Seamless User Experience</div>
-                            <div class="feature-description">Users never touch SOL — pay fees with any token or have them sponsored</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+      <main id="main-content">
+        <section id="top" class="hero section" aria-labelledby="hero-title">
+          <div class="hero-pattern" aria-hidden="true"></div>
+          <p class="eyebrow">Institutional-Grade Open Infrastructure</p>
+          <h1 id="hero-title">Revolutionizing Solana Finance for Institutional Portfolios</h1>
+          <p class="hero-subhead">
+            A structured map of the full-stack Solana finance ecosystem—optimized for portfolio teams, compliance officers,
+            and product strategists who need rigor over hype.
+          </p>
+          <div class="hero-cta-row">
+            <a class="btn btn-primary" href="https://github.com" aria-label="Explore source code repository">Explore Code</a>
+            <a class="btn btn-secondary" href="#docs">View Usage Patterns</a>
+          </div>
+          <div class="trust-panel" aria-label="Institutional trust signals">
+            <p>Reference architecture reviewed by fictional institutional partners:</p>
+            <ul class="logo-row">
+              <li><img loading="lazy" src="assets/logo-northbridge.svg" alt="Northbridge Capital logo" /></li>
+              <li><img loading="lazy" src="assets/logo-argent.svg" alt="Argent Harbor logo" /></li>
+              <li><img loading="lazy" src="assets/logo-halcyon.svg" alt="Halcyon Trust logo" /></li>
+            </ul>
+            <p class="secure-note" role="status" aria-live="polite">🔒 Security-reviewed patterns • Compliance-aware module taxonomy</p>
+          </div>
+        </section>
 
-    <!-- Asset Ecosystem Section -->
-    <section class="section ecosystem">
-        <div class="container">
-            <h2 class="section-title">Asset Ecosystem Map</h2>
-            <p class="section-subtitle">$15.8B+ in tokenized assets across four institutional layers</p>
-            
-            <div class="ecosystem-layers">
-                <!-- Layer 1: Stablecoins -->
-                <div class="ecosystem-layer">
-                    <div class="ecosystem-layer-header">
-                        <h3 class="ecosystem-layer-title">Stablecoins & Digital Cash</h3>
-                        <span class="ecosystem-layer-value">$14B+</span>
-                    </div>
-                    <div class="projects-grid">
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://cryptologos.cc/logos/usd-coin-usdc-logo.png" alt="USDC" onerror="this.outerHTML='<div class=project-logo>USDC</div>'">
-                                <a href="https://centre.io" class="project-name">USDC</a>
-                            </div>
-                            <p class="project-description">Circle's fully-backed digital dollar with institutional custody and compliance</p>
-                            <div class="project-links">
-                                <a href="https://centre.io" class="project-link">centre.io</a>
-                                <a href="https://twitter.com/centre_io" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT" onerror="this.outerHTML='<div class=project-logo>USDT</div>'">
-                                <a href="https://tether.to" class="project-name">USDT</a>
-                            </div>
-                            <p class="project-description">Tether's stablecoin with the largest market cap and trading volume</p>
-                            <div class="project-links">
-                                <a href="https://tether.to" class="project-link">tether.to</a>
-                                <a href="https://twitter.com/Tether_to" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=paypal.com" alt="PYUSD" onerror="this.outerHTML='<div class=project-logo>PYUSD</div>'">
-                                <a href="https://paypal.com/pyusd" class="project-name">PYUSD</a>
-                            </div>
-                            <p class="project-description">PayPal's regulated stablecoin with Transfer Hooks for compliance</p>
-                            <div class="project-links">
-                                <a href="https://paypal.com/pyusd" class="project-link">paypal.com/pyusd</a>
-                                <a href="https://twitter.com/PayPal" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=circle.com" alt="EURC" onerror="this.outerHTML='<div class=project-logo>EURC</div>'">
-                                <a href="https://centre.io" class="project-name">EURC</a>
-                            </div>
-                            <p class="project-description">Circle's euro-backed stablecoin for European institutional markets</p>
-                            <div class="project-links">
-                                <a href="https://centre.io" class="project-link">centre.io</a>
-                                <a href="https://twitter.com/centre_io" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=ripple.com" alt="RLUSD" onerror="this.outerHTML='<div class=project-logo>RLUSD</div>'">
-                                <a href="https://ripple.com" class="project-name">RLUSD</a>
-                            </div>
-                            <p class="project-description">Ripple's institutional-grade USD stablecoin</p>
-                            <div class="project-links">
-                                <a href="https://ripple.com" class="project-link">ripple.com</a>
-                                <a href="https://twitter.com/Ripple" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=westernunion.com" alt="USDPT" onerror="this.outerHTML='<div class=project-logo>USDPT</div>'">
-                                <a href="https://westernunion.com" class="project-name">USDPT</a>
-                            </div>
-                            <p class="project-description">Western Union's $150B/yr remittance stablecoin</p>
-                            <div class="project-links">
-                                <a href="https://westernunion.com" class="project-link">westernunion.com</a>
-                                <a href="https://twitter.com/WesternUnion" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Layer 2: Yield & Cash Management -->
-                <div class="ecosystem-layer">
-                    <div class="ecosystem-layer-header">
-                        <h3 class="ecosystem-layer-title">Yield & Cash Management</h3>
-                        <span class="ecosystem-layer-value">$600M+</span>
-                    </div>
-                    <div class="projects-grid">
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=blackrock.com" alt="BlackRock BUIDL" onerror="this.outerHTML='<div class=project-logo>BUIDL</div>'">
-                                <a href="https://blackrock.com" class="project-name">BlackRock BUIDL</a>
-                            </div>
-                            <p class="project-description">World's largest asset manager's tokenized money market fund</p>
-                            <div class="project-links">
-                                <a href="https://blackrock.com" class="project-link">blackrock.com</a>
-                                <a href="https://twitter.com/BlackRock" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=ondo.finance" alt="Ondo" onerror="this.outerHTML='<div class=project-logo>ONDO</div>'">
-                                <a href="https://ondo.finance" class="project-name">Ondo Finance</a>
-                            </div>
-                            <p class="project-description">USDY, OUSG tokenized treasury and bond products</p>
-                            <div class="project-links">
-                                <a href="https://ondo.finance" class="project-link">ondo.finance</a>
-                                <a href="https://twitter.com/OndoFinance" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=franklintempleton.com" alt="Franklin" onerror="this.outerHTML='<div class=project-logo>FRAN</div>'">
-                                <a href="https://franklintempleton.com" class="project-name">Franklin Templeton</a>
-                            </div>
-                            <p class="project-description">BENJI, FOBXX - First US money market fund on public blockchain</p>
-                            <div class="project-links">
-                                <a href="https://franklintempleton.com" class="project-link">franklintempleton.com</a>
-                                <a href="https://twitter.com/FTI_US" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=jito.network" alt="Jito" onerror="this.outerHTML='<div class=project-logo>JITO</div>'">
-                                <a href="https://jito.network" class="project-name">Jito</a>
-                            </div>
-                            <p class="project-description">Liquid staking protocol with MEV rewards</p>
-                            <div class="project-links">
-                                <a href="https://jito.network" class="project-link">jito.network</a>
-                                <a href="https://twitter.com/jito_sol" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=marinade.finance" alt="Marinade" onerror="this.outerHTML='<div class=project-logo>MARI</div>'">
-                                <a href="https://marinade.finance" class="project-name">Marinade</a>
-                            </div>
-                            <p class="project-description">Non-custodial liquid staking for institutional SOL holders</p>
-                            <div class="project-links">
-                                <a href="https://marinade.finance" class="project-link">marinade.finance</a>
-                                <a href="https://twitter.com/MarinadeFinance" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Layer 3: Private Credit -->
-                <div class="ecosystem-layer">
-                    <div class="ecosystem-layer-header">
-                        <h3 class="ecosystem-layer-title">Private Credit & Hedge Funds</h3>
-                        <span class="ecosystem-layer-value">$500M+</span>
-                    </div>
-                    <div class="projects-grid">
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=brevanhoward.com" alt="Brevan Howard" onerror="this.outerHTML='<div class=project-logo>BH</div>'">
-                                <a href="https://brevanhoward.com" class="project-name">Brevan Howard</a>
-                            </div>
-                            <p class="project-description">Tokenized hedge fund positions and credit products</p>
-                            <div class="project-links">
-                                <a href="https://brevanhoward.com" class="project-link">brevanhoward.com</a>
-                                <a href="https://twitter.com/BrevanHoward" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=hamiltonlane.com" alt="Hamilton Lane" onerror="this.outerHTML='<div class=project-logo>HL</div>'">
-                                <a href="https://hamiltonlane.com" class="project-name">Hamilton Lane</a>
-                            </div>
-                            <p class="project-description">Private equity and credit fund tokenization</p>
-                            <div class="project-links">
-                                <a href="https://hamiltonlane.com" class="project-link">hamiltonlane.com</a>
-                                <a href="https://twitter.com/HamiltonLaneInc" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=maple.finance" alt="Maple" onerror="this.outerHTML='<div class=project-logo>MPL</div>'">
-                                <a href="https://maple.finance" class="project-name">Maple Finance</a>
-                            </div>
-                            <p class="project-description">Institutional credit pools and private lending</p>
-                            <div class="project-links">
-                                <a href="https://maple.finance" class="project-link">maple.finance</a>
-                                <a href="https://twitter.com/maplefinance" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=clearpool.finance" alt="Clearpool" onerror="this.outerHTML='<div class=project-logo>CPOOL</div>'">
-                                <a href="https://clearpool.finance" class="project-name">Clearpool</a>
-                            </div>
-                            <p class="project-description">Permissionless credit marketplace for institutions</p>
-                            <div class="project-links">
-                                <a href="https://clearpool.finance" class="project-link">clearpool.finance</a>
-                                <a href="https://twitter.com/ClearpoolFin" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Layer 4: Alternatives & RWA -->
-                <div class="ecosystem-layer">
-                    <div class="ecosystem-layer-header">
-                        <h3 class="ecosystem-layer-title">Alternatives & RWA</h3>
-                        <span class="ecosystem-layer-value">$700M+</span>
-                    </div>
-                    <div class="projects-grid">
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=backed.fi" alt="Backed" onerror="this.outerHTML='<div class=project-logo>BACK</div>'">
-                                <a href="https://backed.fi" class="project-name">Backed/xStocks</a>
-                            </div>
-                            <p class="project-description">Tokenized stocks and ETFs with institutional custody</p>
-                            <div class="project-links">
-                                <a href="https://backed.fi" class="project-link">backed.fi</a>
-                                <a href="https://twitter.com/BackedFi" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=parcl.co" alt="Parcl" onerror="this.outerHTML='<div class=project-logo>PRCL</div>'">
-                                <a href="https://parcl.co" class="project-name">Parcl</a>
-                            </div>
-                            <p class="project-description">Real estate price exposure through synthetic assets</p>
-                            <div class="project-links">
-                                <a href="https://parcl.co" class="project-link">parcl.co</a>
-                                <a href="https://twitter.com/Parcl" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://icons.llama.fi/helium.png" alt="Helium" onerror="this.outerHTML='<div class=project-logo>HNT</div>'">
-                                <a href="https://helium.com" class="project-name">Helium</a>
-                            </div>
-                            <p class="project-description">Decentralized wireless infrastructure and IoT networks</p>
-                            <div class="project-links">
-                                <a href="https://helium.com" class="project-link">helium.com</a>
-                                <a href="https://twitter.com/helium" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=render.com" alt="Render" onerror="this.outerHTML='<div class=project-logo>RNDR</div>'">
-                                <a href="https://render.com" class="project-name">Render</a>
-                            </div>
-                            <p class="project-description">Decentralized GPU compute network for AI and rendering</p>
-                            <div class="project-links">
-                                <a href="https://render.com" class="project-link">render.com</a>
-                                <a href="https://twitter.com/RenderNetwork" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Infrastructure Rail -->
-                <div class="ecosystem-layer" style="background: linear-gradient(135deg, rgba(153, 69, 255, 0.05), rgba(20, 241, 149, 0.05));">
-                    <div class="ecosystem-layer-header">
-                        <h3 class="ecosystem-layer-title">Infrastructure Rail</h3>
-                        <span class="ecosystem-layer-value">Core Infrastructure</span>
-                    </div>
-                    <div class="projects-grid">
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=visa.com" alt="Visa" onerror="this.outerHTML='<div class=project-logo>VISA</div>'">
-                                <a href="https://visa.com" class="project-name">Visa</a>
-                            </div>
-                            <p class="project-description">Second blockchain supported for USDC settlement</p>
-                            <div class="project-links">
-                                <a href="https://visa.com" class="project-link">visa.com</a>
-                                <a href="https://twitter.com/Visa" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=stripe.com" alt="Stripe" onerror="this.outerHTML='<div class=project-logo>STRP</div>'">
-                                <a href="https://stripe.com" class="project-name">Stripe</a>
-                            </div>
-                            <p class="project-description">Payment processing with crypto-to-fiat rails</p>
-                            <div class="project-links">
-                                <a href="https://stripe.com" class="project-link">stripe.com</a>
-                                <a href="https://twitter.com/stripe" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=wormhole.com" alt="Wormhole" onerror="this.outerHTML='<div class=project-logo>W</div>'">
-                                <a href="https://wormhole.com" class="project-name">Wormhole</a>
-                            </div>
-                            <p class="project-description">Cross-chain bridge and messaging protocol</p>
-                            <div class="project-links">
-                                <a href="https://wormhole.com" class="project-link">wormhole.com</a>
-                                <a href="https://twitter.com/wormhole" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="project-card">
-                            <div class="project-header">
-                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=jupiter.ag" alt="Jupiter" onerror="this.outerHTML='<div class=project-logo>JUP</div>'">
-                                <a href="https://jupiter.ag" class="project-name">Jupiter</a>
-                            </div>
-                            <p class="project-description">Liquidity aggregator and trading infrastructure</p>
-                            <div class="project-links">
-                                <a href="https://jupiter.ag" class="project-link">jupiter.ag</a>
-                                <a href="https://twitter.com/JupiterExchange" class="twitter-link">
-                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+        <section id="features" class="section" aria-labelledby="features-title">
+          <h2 id="features-title">Capabilities Built for Financial Institutions</h2>
+          <p class="section-intro">
+            Card modules adopt BlackRock-like content density and restrained micro-interactions: focused, scannable, and decisive.
+          </p>
+          <div class="features-grid">
+            <article class="feature-card">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.3 9.3-8 10-4.7-.7-8-5-8-10V6l8-4zm0 5a3 3 0 100 6 3 3 0 000-6zm-5 9.2c1.4 1.7 3.2 2.9 5 3.3 1.8-.4 3.6-1.6 5-3.3-1.1-1.5-2.8-2.2-5-2.2s-3.9.7-5 2.2z"/></svg>
+              <h3>Security by Design</h3>
+              <ul>
+                <li>Control-driven architecture language for audit teams.</li>
+                <li>Role-aware integration patterns across asset classes.</li>
+                <li>Explicit trust boundaries and secure defaults.</li>
+              </ul>
+            </article>
+            <article class="feature-card">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18v4H3V4zm2 6h4v10H5V10zm5 3h4v7h-4v-7zm5-5h4v12h-4V8z"/></svg>
+              <h3>Scalable Taxonomy</h3>
+              <ul>
+                <li>Layered framework from primitives to product channels.</li>
+                <li>Composable modules for research and production handoff.</li>
+                <li>Consistent naming for multi-team governance.</li>
+              </ul>
+            </article>
+            <article class="feature-card">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 019 9h-3l4 4 4-4h-3A13 13 0 109 24v-3a10 10 0 013-18zm-1 5h2v6l5 3-1 1.7-6-3.7V8z"/></svg>
+              <h3>Integration Velocity</h3>
+              <ul>
+                <li>Implementation snippets for rapid onboarding.</li>
+                <li>Pragmatic defaults for analyst and engineering teams.</li>
+                <li>Low-friction adoption with high documentation quality.</li>
+              </ul>
+            </article>
+            <article class="feature-card">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 7h7l-5.7 4.1L18.5 21 12 16.8 5.5 21l2.2-7.9L2 9h7l3-7z"/></svg>
+              <h3>Executive Clarity</h3>
+              <ul>
+                <li>High-signal framing for investment committee decks.</li>
+                <li>Clear separation of strategy, risk, and implementation.</li>
+                <li>Designed for stakeholder confidence and trust.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
 
-    <!-- Case Studies Section -->
-    <section class="section case-studies">
-        <div class="container">
-            <h2 class="section-title">Institutional Case Studies</h2>
-            <p class="section-subtitle">Landmark deployments proving Solana's institutional readiness</p>
-            
-            <div class="cases-grid">
-                <div class="case-card">
-                    <h3 class="case-company">BlackRock BUIDL</h3>
-                    <p class="case-description">World's largest asset manager launched its tokenized money market fund on Solana, bringing institutional-grade treasury management to blockchain. $500M+ in assets under management.</p>
-                </div>
-                
-                <div class="case-card">
-                    <h3 class="case-company">J.P. Morgan</h3>
-                    <p class="case-description">Executed atomic Delivery versus Payment (DvP) settlement of commercial paper against USDC on Solana, demonstrating institutional-grade settlement capabilities.</p>
-                </div>
-                
-                <div class="case-card">
-                    <h3 class="case-company">Western Union</h3>
-                    <p class="case-description">$150 billion per year remittance company chose Solana for USDPT stablecoin, leveraging low fees and fast settlement for cross-border payments.</p>
-                </div>
-                
-                <div class="case-card">
-                    <h3 class="case-company">Visa</h3>
-                    <p class="case-description">Selected Solana as the second blockchain supported for USDC settlement in 2023, joining Ethereum in Visa's crypto payment infrastructure.</p>
-                </div>
-                
-                <div class="case-card">
-                    <h3 class="case-company">Franklin Templeton</h3>
-                    <p class="case-description">First US-registered money market fund deployed on a public blockchain with BENJI and FOBXX, setting precedent for regulated fund tokenization.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        <section id="docs" class="section" aria-labelledby="docs-title">
+          <h2 id="docs-title">Documentation & Usage Snippets</h2>
+          <p class="section-intro">Compact implementation references using keyboard-accessible accordion panels.</p>
 
-    <!-- FAQ Section -->
-    <section class="section faq">
-        <div class="container">
-            <h2 class="section-title">Common Objections</h2>
-            <p class="section-subtitle">Addressing institutional concerns with data-driven responses</p>
-            
-            <div class="faq-list">
-                <div class="faq-item">
-                    <details>
-                        <summary>Why not a private/permissioned blockchain?</summary>
-                        <div class="faq-answer">
-                            R3 is literally pivoting TO Solana. Building your own chain is like building a private highway to run a delivery fleet — expensive, isolated, and ultimately limited. Solana provides the benefits of a private chain (control, compliance) while maintaining access to $100B+ in public liquidity and composable applications.
-                        </div>
-                    </details>
-                </div>
-                
-                <div class="faq-item">
-                    <details>
-                        <summary>Why not an L2?</summary>
-                        <div class="faq-answer">
-                            L2s create infrastructure burden, bridge risk, liquidity fragmentation, and DoS vulnerabilities. You're building on someone else's roadmap while fragmenting liquidity away from the main ecosystem. Solana's localized fee markets provide L2-like economics without the complexity.
-                        </div>
-                    </details>
-                </div>
-                
-                <div class="faq-item">
-                    <details>
-                        <summary>What about privacy?</summary>
-                        <div class="faq-answer">
-                            Solana offers three layers of privacy: Confidential Transfers for encrypted on-chain balances, Contra for fully private execution, and Solana Noir for zero-knowledge proofs. This provides more privacy options than most enterprise blockchains.
-                        </div>
-                    </details>
-                </div>
-                
-                <div class="faq-item">
-                    <details>
-                        <summary>Can you match competitor grants?</summary>
-                        <div class="faq-answer">
-                            Solana offers the strongest organic ecosystem rather than artificial grant incentives. Short-term grant optimization vs 10-year roadmap — which serves your institutional clients better? Sustainable economics beat temporary subsidies.
-                        </div>
-                    </details>
-                </div>
-                
-                <div class="faq-item">
-                    <details>
-                        <summary>How do we handle KYC?</summary>
-                        <div class="faq-answer">
-                            Token Extensions embed compliance at the protocol level. Transfer Hooks enable real-time KYC/sanctions screening on every transaction. Allowlists ensure only whitelisted addresses can hold tokens. This is compliance by design, not compliance as an afterthought.
-                        </div>
-                    </details>
-                </div>
-            </div>
-        </div>
-    </section>
+          <div class="accordion" role="region" aria-label="Usage documentation">
+            <details open>
+              <summary>1) Install dependencies and run locally</summary>
+              <pre><code class="language-bash"># clone and inspect
+npm install
+npm run dev</code></pre>
+            </details>
+            <details>
+              <summary>2) Load institutional module map</summary>
+              <pre><code class="language-js">import { loadStack } from "./finance/stack";
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">⬡ Solana</div>
-                <div class="footer-links">
-                    <a href="https://defillama.com" class="footer-link">DeFi Llama</a>
-                    <a href="https://dune.com" class="footer-link">Dune Analytics</a>
-                    <a href="https://rwa.xyz" class="footer-link">RWA.xyz</a>
-                    <a href="https://explorer.solana.com" class="footer-link">Solana Explorer</a>
-                    <a href="https://solana.com" class="footer-link">Solana.com</a>
-                </div>
-            </div>
-            <p class="footer-note">Data as of February 2026 • This page is for informational purposes only and does not constitute investment advice</p>
-        </div>
+const map = await loadStack({
+  assetClass: "fixed-income",
+  region: "us",
+  controlsProfile: "soc2"
+});
+
+console.table(map.layers);</code></pre>
+            </details>
+            <details>
+              <summary>3) Render governance checklist</summary>
+              <pre><code class="language-json">{
+  "custody": "segregated",
+  "kyc": true,
+  "amlMonitoring": "continuous",
+  "auditEvidence": "exportable"
+}</code></pre>
+            </details>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer id="footer" class="footer" aria-label="Repository metadata and compliance">
+      <div class="footer-grid">
+        <section>
+          <h2>Repository Signals</h2>
+          <ul class="repo-stats" aria-live="polite">
+            <li><span>Stars</span><strong id="stars">—</strong></li>
+            <li><span>Forks</span><strong id="forks">—</strong></li>
+            <li><span>Open Issues</span><strong id="issues">—</strong></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Contact</h2>
+          <form class="contact-form" aria-label="Contact form stub">
+            <label for="email">Business email</label>
+            <input id="email" name="email" type="email" placeholder="team@institution.com" required />
+            <button type="button">Request briefing</button>
+          </form>
+        </section>
+
+        <section>
+          <h2>Compliance Note</h2>
+          <p>
+            Informational material only. Not investment advice. Governance patterns should be validated against internal legal,
+            risk, and compliance policies.
+          </p>
+          <p class="social-links">
+            <a href="https://github.com" aria-label="GitHub">GitHub</a>
+            <a href="https://www.linkedin.com" aria-label="LinkedIn">LinkedIn</a>
+            <a href="https://x.com" aria-label="X">X</a>
+          </p>
+        </section>
+      </div>
+      <p class="footer-meta">MIT License • © Fullstack Finance</p>
     </footer>
 
-    <script>
-        // Smooth scrolling for internal links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Enhanced logo error handling
-        document.querySelectorAll('.project-logo').forEach(logo => {
-            if (logo.tagName === 'IMG') {
-                logo.addEventListener('error', function() {
-                    const projectName = this.alt || 'PROJECT';
-                    const initials = projectName.substring(0, 2).toUpperCase();
-                    this.outerHTML = `<div class="project-logo">${initials}</div>`;
-                });
-            }
-        });
-
-        // Add subtle entrance animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        // Apply animation to cards
-        document.querySelectorAll('.benefit-card, .layer, .project-card, .case-card, .faq-item').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(el);
-        });
-    </script>
-</body>
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="app.js" defer></script>
+  </body>
 </html>
