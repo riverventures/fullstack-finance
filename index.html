@@ -3,618 +3,1326 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solana Full Stack Finance</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <title>Tokenize on Solana | Institutional Infrastructure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
+            --bg-primary: #0D0D0D;
+            --bg-secondary: #1A1A1A;
+            --bg-tertiary: #2A2A2A;
             --solana-purple: #9945FF;
-            --solana-teal: #14F195;
-            --solana-dark: #0D0D0D;
-            --solana-gray: #1A1A1A;
-            --solana-light-gray: #2A2A2A;
-            --gradient-main: linear-gradient(135deg, #9945FF 0%, #14F195 100%);
+            --solana-green: #14F195;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B3B3B3;
+            --text-muted: #808080;
+            --border-color: #333333;
+            --hover-bg: #1F1F1F;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
-            font-family: 'Space Grotesk', -apple-system, sans-serif;
-            background: var(--solana-dark);
-            color: #FFFFFF;
-            min-height: 100vh;
-            padding: 12px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        .container { max-width: 1400px; margin: 0 auto; }
-
-        .header { text-align: center; margin-bottom: 14px; }
-
-        .header-label {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--solana-teal);
-            margin-bottom: 6px;
-        }
-
-        .header h1 {
-            font-size: 42px;
-            font-weight: 700;
-            background: var(--gradient-main);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 4px;
-        }
-
-        .header-subtitle { font-size: 16px; color: #888; font-weight: 400; }
-
-        .stack { display: flex; flex-direction: column; gap: 1px; }
-
-        .layer {
-            background: var(--solana-gray);
-            border-radius: 10px;
-            padding: 10px 16px;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .layer:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 12px 40px rgba(153, 69, 255, 0.12);
-        }
-
-        .layer::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 4px;
-        }
-
-        .layer-1::before { background: linear-gradient(180deg, #9945FF, #7B3FE4); }
-        .layer-2::before { background: linear-gradient(180deg, #7B3FE4, #5D39C9); }
-        .layer-3::before { background: linear-gradient(180deg, #5D39C9, #2BB78C); }
-        .layer-4::before { background: linear-gradient(180deg, #2BB78C, #14F195); }
-
-        .layer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .layer-number {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 10px;
-            color: #666;
-            letter-spacing: 1px;
-        }
-
-        .layer-title {
-            font-size: 13px;
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
             font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #FFF;
+            line-height: 1.2;
         }
 
-        .layer-metric {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            color: var(--solana-teal);
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
-        .projects { display: flex; flex-wrap: wrap; gap: 3px; }
-
-        a.project {
-            text-decoration: none;
-            color: inherit;
+        .section {
+            padding: 80px 0;
         }
 
-        .project {
-            background: var(--solana-light-gray);
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 6px 10px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #E0E0E0;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-            flex: 0 1 auto;
-            min-width: 150px;
-            max-width: 220px;
-        }
-
-        .project:hover {
-            border-color: var(--solana-purple);
-            background: rgba(153, 69, 255, 0.1);
-            color: #FFF;
-        }
-
-        .project-info { display: flex; flex-direction: column; }
-        .project-name { font-weight: 600; font-size: 13px; line-height: 1.2; }
-        .project-desc { font-size: 10px; color: #888; font-weight: 400; line-height: 1.3; margin-top: 1px; }
-
-        .project-logo {
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            object-fit: contain;
-            background: #FFF;
-            padding: 2px;
-            flex-shrink: 0;
-        }
-
-        .project-logo-square {
-            width: 40px; height: 40px;
-            border-radius: 4px;
-            object-fit: contain;
-            background: #FFF;
-            padding: 3px;
-            flex-shrink: 0;
-        }
-
-        .logo-placeholder {
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-            color: #FFF;
-            flex-shrink: 0;
-        }
-
-        .x-link {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            margin-left: auto;
-            padding: 4px;
-            flex-shrink: 0;
-        }
-
-        .x-link:hover svg { fill: #FFF; }
-
-        .project:hover .x-link { opacity: 1; }
-
-        .infrastructure {
-            margin-top: 1px;
-            padding: 10px 16px;
-            background: linear-gradient(90deg, rgba(153, 69, 255, 0.1) 0%, rgba(20, 241, 149, 0.1) 100%);
-            border: 1px solid #333;
-            border-radius: 10px;
-        }
-
-        .infrastructure .layer-title { font-size: 11px; color: #888; margin-bottom: 8px; }
-        .infrastructure .project { background: transparent; border-color: #444; }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-top: 14px;
-            padding-top: 14px;
-            border-top: 1px solid #222;
-        }
-
-        .stat { text-align: center; }
-
-        .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            background: var(--gradient-main);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 10px;
-            color: #666;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .footer {
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
             text-align: center;
-            margin-top: 14px;
-            padding-top: 12px;
-            border-top: 1px solid #222;
-        }
-
-        .footer-logo {
-            font-size: 20px;
-            font-weight: 700;
-            background: var(--gradient-main);
+            background: linear-gradient(135deg, var(--solana-purple), var(--solana-green));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 4px;
         }
 
-        .footer-text {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 10px;
-            color: #555;
-            letter-spacing: 1px;
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        @media (min-width: 769px) {
-            .project-logo, .project-logo-square, .logo-placeholder {
-                width: 48px; height: 48px;
-                font-size: 14px;
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: linear-gradient(135deg, 
+                rgba(153, 69, 255, 0.05) 0%, 
+                rgba(13, 13, 13, 1) 50%, 
+                rgba(20, 241, 149, 0.05) 100%);
+            animation: gradientShift 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background: linear-gradient(135deg, 
+                    rgba(153, 69, 255, 0.05) 0%, 
+                    rgba(13, 13, 13, 1) 50%, 
+                    rgba(20, 241, 149, 0.05) 100%);
+            }
+            100% {
+                background: linear-gradient(135deg, 
+                    rgba(20, 241, 149, 0.05) 0%, 
+                    rgba(13, 13, 13, 1) 50%, 
+                    rgba(153, 69, 255, 0.05) 100%);
             }
         }
 
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 5rem);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary), var(--solana-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 4rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-2px);
+            border-color: var(--solana-purple);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--solana-green);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* Why Solana Section */
+        .why-solana {
+            background: var(--bg-secondary);
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .benefit-card {
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: var(--bg-primary);
+            transition: all 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--solana-purple);
+            box-shadow: 0 10px 40px rgba(153, 69, 255, 0.1);
+        }
+
+        .benefit-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--solana-purple), var(--solana-green));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .benefit-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .benefit-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Three Layers Section */
+        .layers {
+            background: var(--bg-primary);
+        }
+
+        .layers-container {
+            position: relative;
+            margin-top: 4rem;
+        }
+
+        .layer {
+            margin-bottom: 2rem;
+            padding: 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(153, 69, 255, 0.02), rgba(20, 241, 149, 0.02));
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .layer:hover {
+            transform: translateX(10px);
+            border-color: var(--solana-purple);
+        }
+
+        .layer-number {
+            position: absolute;
+            top: -15px;
+            left: 30px;
+            background: var(--solana-purple);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .layer-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            padding-left: 20px;
+        }
+
+        .layer-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .layer-feature {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            border-left: 3px solid var(--solana-green);
+        }
+
+        .feature-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .layer-partners {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .partners-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .partners-list {
+            color: var(--solana-green);
+            font-weight: 500;
+        }
+
+        /* Asset Ecosystem */
+        .ecosystem {
+            background: var(--bg-secondary);
+        }
+
+        .ecosystem-layers {
+            margin-top: 3rem;
+        }
+
+        .ecosystem-layer {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: var(--bg-primary);
+        }
+
+        .ecosystem-layer-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .ecosystem-layer-title {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .ecosystem-layer-value {
+            font-size: 1.2rem;
+            color: var(--solana-green);
+            font-weight: 700;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .project-card {
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--solana-purple);
+            box-shadow: 0 8px 25px rgba(153, 69, 255, 0.15);
+        }
+
+        .project-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+        }
+
+        .project-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .project-name:hover {
+            color: var(--solana-purple);
+        }
+
+        .project-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .project-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .project-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+
+        .project-link:hover {
+            color: var(--solana-green);
+        }
+
+        .twitter-icon {
+            width: 16px;
+            height: 16px;
+            fill: var(--text-muted);
+            transition: fill 0.3s ease;
+        }
+
+        .twitter-icon:hover {
+            fill: var(--solana-green);
+        }
+
+        /* Case Studies */
+        .case-studies {
+            background: var(--bg-primary);
+        }
+
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .case-card {
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(153, 69, 255, 0.03), rgba(20, 241, 149, 0.03));
+            transition: all 0.3s ease;
+        }
+
+        .case-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--solana-green);
+            box-shadow: 0 12px 30px rgba(20, 241, 149, 0.1);
+        }
+
+        .case-company {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--solana-green);
+            margin-bottom: 1rem;
+        }
+
+        .case-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* FAQ Section */
+        .faq {
+            background: var(--bg-secondary);
+        }
+
+        .faq-list {
+            margin-top: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .faq-item {
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-primary);
+            overflow: hidden;
+        }
+
+        .faq-item details {
+            cursor: pointer;
+        }
+
+        .faq-item summary {
+            padding: 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            list-style: none;
+            position: relative;
+        }
+
+        .faq-item summary:hover {
+            background: var(--hover-bg);
+            color: var(--solana-purple);
+        }
+
+        .faq-item summary::after {
+            content: "+";
+            position: absolute;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--solana-purple);
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item[open] summary::after {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            padding: 0 1.5rem 1.5rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-primary);
+            padding: 3rem 0;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--solana-purple);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--solana-green);
+        }
+
+        .footer-note {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 2rem;
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            body { padding: 8px; }
-            .header h1 { font-size: 28px; }
-            .header { margin-bottom: 10px; }
-            .layer { padding: 8px 10px; }
-            .layer-header { margin-bottom: 6px; }
-            .stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .projects { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
-            .project { padding: 5px 7px; min-width: 0; max-width: none; gap: 6px; }
-            .project-logo, .project-logo-square, .logo-placeholder { width: 32px; height: 32px; }
-            .x-link { opacity: 1; }
-            .infrastructure { padding: 8px 10px; }
+            .section {
+                padding: 60px 0;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .stats-bar {
+                gap: 1rem;
+            }
+
+            .stat-item {
+                min-width: 150px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .layer {
+                padding: 1.5rem;
+            }
+
+            .layer-features {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cases-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .hero {
+                background: none;
+                min-height: auto;
+                padding: 2rem 0;
+            }
+
+            .section {
+                padding: 2rem 0;
+            }
+
+            .project-card,
+            .benefit-card,
+            .case-card,
+            .layer {
+                break-inside: avoid;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="header-label">Institutional Infrastructure</div>
-            <h1>Full Stack Finance</h1>
-            <p class="header-subtitle">The complete capital markets stack, built on Solana</p>
-        </header>
-
-        <div class="stack">
-            <!-- LAYER 1: Stablecoins -->
-            <div class="layer layer-1">
-                <div class="layer-header">
-                    <div>
-                        <div class="layer-number">LAYER 01</div>
-                        <div class="layer-title">Stablecoins &amp; Digital Cash</div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Every Asset. Every Market. One Network.</h1>
+                <p class="hero-subtitle">The institutional infrastructure for tokenized assets on Solana</p>
+                
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-value">$14B+</span>
+                        <span class="stat-label">Stablecoin Supply</span>
                     </div>
-                    <div class="layer-metric">$14B+ Market Cap</div>
-                </div>
-                <div class="projects">
-                    <a href="https://www.circle.com/usdc" target="_blank" rel="noopener" class="project">
-                        <img src="https://cryptologos.cc/logos/usd-coin-usdc-logo.png" alt="USDC" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#2775CA>UC</div>'">
-                        <div class="project-info"><span class="project-name">USDC</span><span class="project-desc">Circle &middot; market-leading USD</span></div>
-                        <a href="https://x.com/circle" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://tether.to" target="_blank" rel="noopener" class="project">
-                        <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#26A17B>UT</div>'">
-                        <div class="project-info"><span class="project-name">USDT</span><span class="project-desc">Tether &middot; largest stablecoin</span></div>
-                        <a href="https://x.com/Tether_to" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://www.paypal.com/pyusd" target="_blank" rel="noopener" class="project">
-                        <img src="https://cryptologos.cc/logos/paypal-usd-pyusd-logo.png" alt="PYUSD" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#003087>PY</div>'">
-                        <div class="project-info"><span class="project-name">PYUSD</span><span class="project-desc">PayPal &middot; US dollar</span></div>
-                        <a href="https://x.com/PayPal" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://www.circle.com/eurc" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=circle.com&sz=64" alt="EURC" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#2775CA>EU</div>'">
-                        <div class="project-info"><span class="project-name">EURC</span><span class="project-desc">Circle &middot; euro stablecoin</span></div>
-                        <a href="https://x.com/circle" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://ripple.com/solutions/stablecoin" target="_blank" rel="noopener" class="project">
-                        <img src="https://cryptologos.cc/logos/xrp-xrp-logo.png" alt="RLUSD" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#23292F>RL</div>'">
-                        <div class="project-info"><span class="project-name">RLUSD</span><span class="project-desc">Ripple &middot; USD stablecoin</span></div>
-                        <a href="https://x.com/Ripple" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://paxos.com/usdg" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=paxos.com&sz=64" alt="USDG" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#00D395>UG</div>'">
-                        <div class="project-info"><span class="project-name">USDG</span><span class="project-desc">Paxos &middot; Global Dollar</span></div>
-                        <a href="https://x.com/PaxosGlobal" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://firstdigitallabs.com" target="_blank" rel="noopener" class="project">
-                        <img src="https://cryptologos.cc/logos/first-digital-usd-fdusd-logo.png" alt="FDUSD" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#24292F>FD</div>'">
-                        <div class="project-info"><span class="project-name">FDUSD</span><span class="project-desc">First Digital &middot; USD</span></div>
-                        <a href="https://x.com/FDLabsHQ" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://www.agora.finance" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=agora.finance&sz=64" alt="AUSD" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#6366F1>AG</div>'">
-                        <div class="project-info"><span class="project-name">AUSD</span><span class="project-desc">Agora &middot; digital dollar</span></div>
-                        <a href="https://x.com/AgoraFinance" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://www.westernunion.com" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=westernunion.com&sz=64" alt="USDPT" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#FFDD00;color:#000>WU</div>'">
-                        <div class="project-info"><span class="project-name">USDPT</span><span class="project-desc">Western Union &middot; payments</span></div>
-                        <a href="https://x.com/WesternUnion" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                </div>
-            </div>
-
-            <!-- LAYER 2: Yield & Cash Management -->
-            <div class="layer layer-2">
-                <div class="layer-header">
-                    <div>
-                        <div class="layer-number">LAYER 02</div>
-                        <div class="layer-title">Yield &amp; Cash Management</div>
+                    <div class="stat-item">
+                        <span class="stat-value">$10T+</span>
+                        <span class="stat-label">Stablecoin Transactions (2025)</span>
                     </div>
-                    <div class="layer-metric">$600M+ Tokenized Treasuries</div>
-                </div>
-                <div class="projects">
-                    <a href="https://www.blackrock.com" target="_blank" rel="noopener" class="project">
-                        <div class="logo-placeholder" style="background:#000">BL</div>
-                        <div class="project-info"><span class="project-name">BlackRock BUIDL</span><span class="project-desc">Tokenized MMF &middot; via Securitize</span></div>
-                        <a href="https://x.com/BlackRock" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://ondo.finance" target="_blank" rel="noopener" class="project">
-                        <img src="https://icons.llama.fi/ondo-finance.png" alt="Ondo" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#1A2B6B>ON</div>'">
-                        <div class="project-info"><span class="project-name">Ondo USDY</span><span class="project-desc">Tokenized US Treasuries</span></div>
-                        <a href="https://x.com/OndoFinance" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://ondo.finance" target="_blank" rel="noopener" class="project">
-                        <img src="https://icons.llama.fi/ondo-finance.png" alt="Ondo" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#1A2B6B>ON</div>'">
-                        <div class="project-info"><span class="project-name">Ondo OUSG</span><span class="project-desc">Short-term US govt bonds</span></div>
-                        <a href="https://x.com/OndoFinance" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://www.franklintempleton.com" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=franklintempleton.com&sz=64" alt="Franklin" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#0B3D91>FT</div>'">
-                        <div class="project-info"><span class="project-name">Franklin BENJI</span><span class="project-desc">Franklin Templeton &middot; on-chain fund</span></div>
-                        <a href="https://x.com/FTI_US" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://www.franklintempleton.com" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=franklintempleton.com&sz=64" alt="Franklin" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#0B3D91>FT</div>'">
-                        <div class="project-info"><span class="project-name">Franklin FOBXX</span><span class="project-desc">Franklin Templeton &middot; govt MMF</span></div>
-                        <a href="https://x.com/FTI_US" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://openeden.com" target="_blank" rel="noopener" class="project">
-                        <img src="https://icons.llama.fi/openeden.jpg" alt="OpenEden" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#00B894>OE</div>'">
-                        <div class="project-info"><span class="project-name">OpenEden TBILL</span><span class="project-desc">Tokenized T-Bills</span></div>
-                        <a href="https://x.com/OpenEden_Labs" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://superstate.co" target="_blank" rel="noopener" class="project">
-                        <div class="logo-placeholder" style="background:#4F46E5">SS</div>
-                        <div class="project-info"><span class="project-name">Superstate USTB</span><span class="project-desc">Short-duration govt bonds</span></div>
-                        <a href="https://x.com/superaborant" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://mountainprotocol.com" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=mountainprotocol.com&sz=64" alt="Mountain" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#8B5CF6>UM</div>'">
-                        <div class="project-info"><span class="project-name">Mountain USDM</span><span class="project-desc">Yield-bearing stablecoin</span></div>
-                        <a href="https://x.com/MountainUSDM" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://etherfuse.com" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=etherfuse.com&sz=64" alt="Etherfuse" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#F59E0B>EF</div>'">
-                        <div class="project-info"><span class="project-name">Etherfuse Stablebonds</span><span class="project-desc">Emerging market bonds</span></div>
-                        <a href="https://x.com/etherfuse" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://www.jito.network" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=jito.network&sz=64" alt="Jito" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#6B4CE6>JT</div>'">
-                        <div class="project-info"><span class="project-name">Jito</span><span class="project-desc">Liquid staking &middot; MEV rewards</span></div>
-                        <a href="https://x.com/jaborito_sol" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://marinade.finance" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=marinade.finance&sz=64" alt="Marinade" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#3AB09E>MR</div>'">
-                        <div class="project-info"><span class="project-name">Marinade</span><span class="project-desc">mSOL liquid staking</span></div>
-                        <a href="https://x.com/MarinadeFinance" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                </div>
-            </div>
-
-            <!-- LAYER 3: Private Credit & Hedge Funds -->
-            <div class="layer layer-3">
-                <div class="layer-header">
-                    <div>
-                        <div class="layer-number">LAYER 03</div>
-                        <div class="layer-title">Private Credit &amp; Hedge Funds</div>
+                    <div class="stat-item">
+                        <span class="stat-value">&lt;1s</span>
+                        <span class="stat-label">Finality</span>
                     </div>
-                    <div class="layer-metric">$500M+ Institutional AUM</div>
-                </div>
-                <div class="projects">
-                    <a href="https://www.brevanhoward.com" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=brevanhoward.com&sz=64" alt="Brevan Howard" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#1E3A5F>BH</div>'">
-                        <div class="project-info"><span class="project-name">Brevan Howard</span><span class="project-desc">Crypto hedge fund</span></div>
-                        <a href="https://x.com/BrevanHoward" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://www.hamiltonlane.com" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=hamiltonlane.com&sz=64" alt="Hamilton Lane" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#002855>HL</div>'">
-                        <div class="project-info"><span class="project-name">Hamilton Lane</span><span class="project-desc">PE fund tokenization</span></div>
-                        <a href="https://x.com/HamiltonLane" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://www.apollo.com" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=apollo.com&sz=64" alt="Apollo" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#003B5C>AP</div>'">
-                        <div class="project-info"><span class="project-name">Apollo</span><span class="project-desc">Alternative asset manager</span></div>
-                        <a href="https://x.com/ApolloGlobal" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://www.simplify.us" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=simplify.us&sz=64" alt="Simplify" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#FF6B35>S12</div>'">
-                        <div class="project-info"><span class="project-name">Simplify T12</span><span class="project-desc">On-chain fund strategy</span></div>
-                        <a href="https://x.com/SimplifyAsstMgt" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://superstate.co" target="_blank" rel="noopener" class="project">
-                        <div class="logo-placeholder" style="background:#4F46E5">SC</div>
-                        <div class="project-info"><span class="project-name">Superstate Carry</span><span class="project-desc">Crypto-enhanced fund</span></div>
-                        <a href="https://x.com/superaborant" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://maple.finance" target="_blank" rel="noopener" class="project">
-                        <img src="https://icons.llama.fi/maple.png" alt="Maple" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#00C26F>MP</div>'">
-                        <div class="project-info"><span class="project-name">Maple Finance</span><span class="project-desc">Institutional lending</span></div>
-                        <a href="https://x.com/maborefinance" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://clearpool.finance" target="_blank" rel="noopener" class="project">
-                        <img src="https://icons.llama.fi/clearpool.png" alt="Clearpool" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#5E5BFF>CP</div>'">
-                        <div class="project-info"><span class="project-name">Clearpool</span><span class="project-desc">Institutional credit &middot; KYC pools</span></div>
-                        <a href="https://x.com/ClearpoolFin" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://credix.finance" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=credix.finance&sz=64" alt="Credix" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#00D4AA>CX</div>'">
-                        <div class="project-info"><span class="project-name">Credix</span><span class="project-desc">Private credit &middot; EM lending</span></div>
-                        <a href="https://x.com/Credix_finance" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://www.librecapital.com" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=kaio.ai&sz=64" alt="Kaio" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#0EA5E9>KA</div>'">
-                        <div class="project-info"><span class="project-name">Kaio</span><span class="project-desc">Institutional fund tokenization</span></div>
-                        <a href="https://x.com/KaioCapital" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                </div>
-            </div>
-
-            <!-- LAYER 4: Alternatives -->
-            <div class="layer layer-4">
-                <div class="layer-header">
-                    <div>
-                        <div class="layer-number">LAYER 04</div>
-                        <div class="layer-title">Alternatives &amp; Real-World Assets</div>
+                    <div class="stat-item">
+                        <span class="stat-value">$0.001</span>
+                        <span class="stat-label">Median Tx</span>
                     </div>
-                    <div class="layer-metric">$700M+ Tokenized Assets</div>
-                </div>
-                <div class="projects">
-                    <a href="https://backed.fi" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=backed.fi&sz=64" alt="Backed" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#1E1E1E>BK</div>'">
-                        <div class="project-info"><span class="project-name">xStocks by Backed</span><span class="project-desc">Tokenized equities</span></div>
-                        <a href="https://x.com/BackedFi" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://ondo.finance" target="_blank" rel="noopener" class="project">
-                        <img src="https://icons.llama.fi/ondo-finance.png" alt="Ondo" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#1A2B6B>ON</div>'">
-                        <div class="project-info"><span class="project-name">Ondo Global Markets</span><span class="project-desc">Tokenized securities access</span></div>
-                        <a href="https://x.com/OndoFinance" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://parcl.co" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=parcl.co&sz=64" alt="Parcl" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#FF5733>PA</div>'">
-                        <div class="project-info"><span class="project-name">Parcl</span><span class="project-desc">Real estate price indices</span></div>
-                        <a href="https://x.com/Parcl" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://www.homebasedao.io" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=homebase.co&sz=64" alt="Homebase" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#10B981>HB</div>'">
-                        <div class="project-info"><span class="project-name">Homebase</span><span class="project-desc">Fractional real estate</span></div>
-                        <a href="https://x.com/HomeaboraseDAO" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://www.helium.com" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=helium.com&sz=64" alt="Helium" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#474DFF>HM</div>'">
-                        <div class="project-info"><span class="project-name">Helium Mobile</span><span class="project-desc">Tokenized telecom infra</span></div>
-                        <a href="https://x.com/helaborumobile" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://rendernetwork.com" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=rendernetwork.com&sz=64" alt="Render" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#E44EFF>RN</div>'">
-                        <div class="project-info"><span class="project-name">Render</span><span class="project-desc">Tokenized GPU compute</span></div>
-                        <a href="https://x.com/rendernetwork" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://hivemapper.com" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=hivemapper.com&sz=64" alt="Hivemapper" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#F7B731>HV</div>'">
-                        <div class="project-info"><span class="project-name">Hivemapper</span><span class="project-desc">Tokenized mapping data</span></div>
-                        <a href="https://x.com/Hivemapper" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://www.getgrass.io" target="_blank" rel="noopener" class="project">
-                        <img src="https://www.google.com/s2/favicons?domain=getgrass.io&sz=64" alt="Grass" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#22C55E>GR</div>'">
-                        <div class="project-info"><span class="project-name">Grass</span><span class="project-desc">Tokenized bandwidth</span></div>
-                        <a href="https://x.com/getaborass_io" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
-                    <a href="https://drukdigital.bt" target="_blank" rel="noopener" class="project">
-                        <div class="logo-placeholder" style="background:#DC2626">$T</div>
-                        <div class="project-info"><span class="project-name">Bhutan $TER</span><span class="project-desc">Sovereign token &middot; Druk Digital</span></div>
-                        <a href="https://x.com/DrukDigital" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    </a>
+                    <div class="stat-item">
+                        <span class="stat-value">50K+</span>
+                        <span class="stat-label">TPS</span>
+                    </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Infrastructure Rail -->
-        <div class="infrastructure">
-            <div class="layer-title">Settlement &amp; Infrastructure Rail</div>
-            <div class="projects">
-                <a href="https://solana.org" target="_blank" rel="noopener" class="project">
-                    <img src="https://www.google.com/s2/favicons?domain=solana.org&sz=64" alt="Contra" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#1A1F71>CO</div>'">
-                    <div class="project-info"><span class="project-name">Contra</span><span class="project-desc">Private SVM &middot; institutional settlement</span></div>
-                    <a href="https://x.com/solana" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                </a>
-                <a href="https://www.visa.com" target="_blank" rel="noopener" class="project">
-                    <div class="logo-placeholder" style="background:#1A1F71">VI</div>
-                    <div class="project-info"><span class="project-name">Visa Settlement</span><span class="project-desc">USDC payment rails</span></div>
-                    <a href="https://x.com/Visa" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                </a>
-                <a href="https://stripe.com" target="_blank" rel="noopener" class="project">
-                    <div class="logo-placeholder" style="background:#635BFF">ST</div>
-                    <div class="project-info"><span class="project-name">Stripe</span><span class="project-desc">Crypto payouts &amp; onramps</span></div>
-                    <a href="https://x.com/stripe" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                </a>
-                <a href="https://www.circle.com" target="_blank" rel="noopener" class="project">
-                    <img src="https://www.google.com/s2/favicons?domain=circle.com&sz=64" alt="Circle" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#2775CA>CI</div>'">
-                    <div class="project-info"><span class="project-name">Circle</span><span class="project-desc">USDC issuer &amp; infra</span></div>
-                    <a href="https://x.com/circle" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                </a>
-                <a href="https://securitize.io" target="_blank" rel="noopener" class="project">
-                    <img src="https://www.google.com/s2/favicons?domain=securitize.io&sz=64" alt="Securitize" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#2563EB>SE</div>'">
-                    <div class="project-info"><span class="project-name">Securitize</span><span class="project-desc">Tokenization &amp; KYC/AML</span></div>
-                    <a href="https://x.com/Securitize" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                </a>
-                <a href="https://r3.com" target="_blank" rel="noopener" class="project">
-                    <img src="https://www.google.com/s2/favicons?domain=r3.com&sz=64" alt="R3" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#E31937>R3</div>'">
-                    <div class="project-info"><span class="project-name">R3 Corda</span><span class="project-desc">Enterprise DLT bridge</span></div>
-                    <a href="https://x.com/r3" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                </a>
-                <a href="https://www.fireblocks.com" target="_blank" rel="noopener" class="project">
-                    <img src="https://www.google.com/s2/favicons?domain=fireblocks.com&sz=64" alt="Fireblocks" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#FF6B2B>FB</div>'">
-                    <div class="project-info"><span class="project-name">Fireblocks</span><span class="project-desc">Institutional custody &amp; MPC</span></div>
-                    <a href="https://x.com/FireblocksHQ" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                </a>
-                <a href="https://wormhole.com" target="_blank" rel="noopener" class="project">
-                    <img src="https://www.google.com/s2/favicons?domain=wormhole.com&sz=64" alt="Wormhole" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#0D1221>WH</div>'">
-                    <div class="project-info"><span class="project-name">Wormhole</span><span class="project-desc">Cross-chain bridge</span></div>
-                    <a href="https://x.com/waborormhole" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                </a>
-                <a href="https://jup.ag" target="_blank" rel="noopener" class="project">
-                    <img src="https://www.google.com/s2/favicons?domain=jup.ag&sz=64" alt="Jupiter" class="project-logo" onerror="this.outerHTML='<div class=logo-placeholder style=background:#131A2A>JU</div>'">
-                    <div class="project-info"><span class="project-name">Jupiter</span><span class="project-desc">DEX aggregator</span></div>
-                    <a href="https://x.com/JupiterExchange" target="_blank" rel="noopener" class="x-link" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#666"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                </a>
+    <!-- Why Solana Section -->
+    <section class="section why-solana">
+        <div class="container">
+            <h2 class="section-title">The Performance Advantage</h2>
+            <p class="section-subtitle">Public liquidity with institutional control — not a private chain, not an L2</p>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">⚡</div>
+                    <h3 class="benefit-title">Production Performance</h3>
+                    <p class="benefit-description">4,500 TPS in production with 400ms confirmation and $0.0002 median fees. Alpenglow upgrade delivers 150ms deterministic finality (2026).</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">🛡</div>
+                    <h3 class="benefit-title">Localized Fee Markets</h3>
+                    <p class="benefit-description">Congestion in one application never impacts another. During October 2025 stress test: ETH gas hit 450 Gwei, Solana stayed under 1 cent.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">💧</div>
+                    <h3 class="benefit-title">$100B+ Public Liquidity</h3>
+                    <p class="benefit-description">Composable DeFi ecosystem with institutional-grade applications. Access the deepest on-chain liquidity pools.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">🔧</div>
+                    <h3 class="benefit-title">Developer Ecosystem Leader</h3>
+                    <p class="benefit-description">Surpassed Ethereum in developer growth (Electric Capital report). Mature tooling, extensive documentation, active community.</p>
+                </div>
             </div>
         </div>
+    </section>
 
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-value">$1.1B+</div>
-                <div class="stat-label">RWA TVL</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value">50K+</div>
-                <div class="stat-label">TPS Capacity</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value">&lt;1s</div>
-                <div class="stat-label">Finality</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value">$0.001</div>
-                <div class="stat-label">Median Tx Cost</div>
+    <!-- Three Layers Section -->
+    <section class="section layers">
+        <div class="container">
+            <h2 class="section-title">Three Layers of Institutional Control</h2>
+            <p class="section-subtitle">Unprecedented compliance and control capabilities built into the protocol</p>
+            
+            <div class="layers-container">
+                <div class="layer">
+                    <div class="layer-number">1</div>
+                    <h3 class="layer-title">Token Extensions (Protocol-Level)</h3>
+                    <div class="layer-features">
+                        <div class="layer-feature">
+                            <div class="feature-name">Transfer Hooks</div>
+                            <div class="feature-description">Real-time KYC/sanctions screening on every transfer</div>
+                        </div>
+                        <div class="layer-feature">
+                            <div class="feature-name">Allowlists</div>
+                            <div class="feature-description">Tokens frozen by default, only whitelisted addresses can hold</div>
+                        </div>
+                        <div class="layer-feature">
+                            <div class="feature-name">Confidential Transfers</div>
+                            <div class="feature-description">Encrypted balances with auditor keys for compliance</div>
+                        </div>
+                    </div>
+                    <div class="layer-partners">
+                        <div class="partners-label">Used by:</div>
+                        <div class="partners-list">PayPal (PYUSD), Paxos (USDP)</div>
+                    </div>
+                </div>
+                
+                <div class="layer">
+                    <div class="layer-number">2</div>
+                    <h3 class="layer-title">Validator Whitelisting (Network-Level)</h3>
+                    <div class="layer-features">
+                        <div class="layer-feature">
+                            <div class="feature-name">Institutional Validators</div>
+                            <div class="feature-description">Route transactions only to vetted institutional validators</div>
+                        </div>
+                        <div class="layer-feature">
+                            <div class="feature-name">Compliance Guarantees</div>
+                            <div class="feature-description">Ensure transactions are processed by regulated entities</div>
+                        </div>
+                    </div>
+                    <div class="layer-partners">
+                        <div class="partners-label">Partners:</div>
+                        <div class="partners-list">Helios, Binance, Figment, Galaxy, Everstake, Kraken</div>
+                    </div>
+                </div>
+                
+                <div class="layer">
+                    <div class="layer-number">3</div>
+                    <h3 class="layer-title">Contra (Private Execution)</h3>
+                    <div class="layer-features">
+                        <div class="layer-feature">
+                            <div class="feature-name">Private SVM Instance</div>
+                            <div class="feature-description">Fully private execution with cryptographic bridge to mainnet</div>
+                        </div>
+                        <div class="layer-feature">
+                            <div class="feature-name">Zero Fees & Instant Finality</div>
+                            <div class="feature-description">Full sovereignty with atomic DvP and PvP settlement</div>
+                        </div>
+                        <div class="layer-feature">
+                            <div class="feature-name">Private Lane Analogy</div>
+                            <div class="feature-description">"Private lane on the public highway" — best of both worlds</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="layer" style="background: linear-gradient(135deg, rgba(20, 241, 149, 0.03), rgba(153, 69, 255, 0.03));">
+                    <div class="layer-number" style="background: var(--solana-green);">+</div>
+                    <h3 class="layer-title">Kora Gas Abstraction</h3>
+                    <div class="layer-features">
+                        <div class="layer-feature">
+                            <div class="feature-name">Seamless User Experience</div>
+                            <div class="feature-description">Users never touch SOL — pay fees with any token or have them sponsored</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-        <!-- Sources -->
-        <div style="margin-top:16px;padding:12px 16px;border:1px solid #222;border-radius:10px;background:var(--solana-gray)">
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#666;margin-bottom:6px">Sources</div>
-            <div style="display:flex;flex-wrap:wrap;gap:4px 16px;font-size:11px;color:#888;line-height:1.8">
-                <a href="https://defillama.com/chain/Solana" target="_blank" style="color:#888;text-decoration:none;border-bottom:1px solid #444">DeFi Llama — Solana TVL</a>
-                <a href="https://dune.com/21co/solana-stablecoins" target="_blank" style="color:#888;text-decoration:none;border-bottom:1px solid #444">Dune — Solana Stablecoins</a>
-                <a href="https://app.rwa.xyz/chains/solana" target="_blank" style="color:#888;text-decoration:none;border-bottom:1px solid #444">RWA.xyz — Solana RWA</a>
-                <a href="https://solana.com/ecosystem" target="_blank" style="color:#888;text-decoration:none;border-bottom:1px solid #444">Solana Ecosystem</a>
-                <a href="https://www.theblock.co/data/on-chain-metrics/solana" target="_blank" style="color:#888;text-decoration:none;border-bottom:1px solid #444">The Block — Solana Metrics</a>
-                <a href="https://explorer.solana.com" target="_blank" style="color:#888;text-decoration:none;border-bottom:1px solid #444">Solana Explorer</a>
-                <a href="https://www.circle.com/en/usdc" target="_blank" style="color:#888;text-decoration:none;border-bottom:1px solid #444">Circle — USDC</a>
-                <a href="https://ondo.finance" target="_blank" style="color:#888;text-decoration:none;border-bottom:1px solid #444">Ondo Finance</a>
-                <a href="https://superstate.co" target="_blank" style="color:#888;text-decoration:none;border-bottom:1px solid #444">Superstate</a>
+    <!-- Asset Ecosystem Section -->
+    <section class="section ecosystem">
+        <div class="container">
+            <h2 class="section-title">Asset Ecosystem Map</h2>
+            <p class="section-subtitle">$15.8B+ in tokenized assets across four institutional layers</p>
+            
+            <div class="ecosystem-layers">
+                <!-- Layer 1: Stablecoins -->
+                <div class="ecosystem-layer">
+                    <div class="ecosystem-layer-header">
+                        <h3 class="ecosystem-layer-title">Stablecoins & Digital Cash</h3>
+                        <span class="ecosystem-layer-value">$14B+</span>
+                    </div>
+                    <div class="projects-grid">
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://cryptologos.cc/logos/usd-coin-usdc-logo.png" alt="USDC" onerror="this.outerHTML='<div class=project-logo>USDC</div>'">
+                                <a href="https://centre.io" class="project-name">USDC</a>
+                            </div>
+                            <p class="project-description">Circle's fully-backed digital dollar with institutional custody and compliance</p>
+                            <div class="project-links">
+                                <a href="https://centre.io" class="project-link">centre.io</a>
+                                <a href="https://twitter.com/centre_io" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT" onerror="this.outerHTML='<div class=project-logo>USDT</div>'">
+                                <a href="https://tether.to" class="project-name">USDT</a>
+                            </div>
+                            <p class="project-description">Tether's stablecoin with the largest market cap and trading volume</p>
+                            <div class="project-links">
+                                <a href="https://tether.to" class="project-link">tether.to</a>
+                                <a href="https://twitter.com/Tether_to" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=paypal.com" alt="PYUSD" onerror="this.outerHTML='<div class=project-logo>PYUSD</div>'">
+                                <a href="https://paypal.com/pyusd" class="project-name">PYUSD</a>
+                            </div>
+                            <p class="project-description">PayPal's regulated stablecoin with Transfer Hooks for compliance</p>
+                            <div class="project-links">
+                                <a href="https://paypal.com/pyusd" class="project-link">paypal.com/pyusd</a>
+                                <a href="https://twitter.com/PayPal" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=circle.com" alt="EURC" onerror="this.outerHTML='<div class=project-logo>EURC</div>'">
+                                <a href="https://centre.io" class="project-name">EURC</a>
+                            </div>
+                            <p class="project-description">Circle's euro-backed stablecoin for European institutional markets</p>
+                            <div class="project-links">
+                                <a href="https://centre.io" class="project-link">centre.io</a>
+                                <a href="https://twitter.com/centre_io" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=ripple.com" alt="RLUSD" onerror="this.outerHTML='<div class=project-logo>RLUSD</div>'">
+                                <a href="https://ripple.com" class="project-name">RLUSD</a>
+                            </div>
+                            <p class="project-description">Ripple's institutional-grade USD stablecoin</p>
+                            <div class="project-links">
+                                <a href="https://ripple.com" class="project-link">ripple.com</a>
+                                <a href="https://twitter.com/Ripple" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=westernunion.com" alt="USDPT" onerror="this.outerHTML='<div class=project-logo>USDPT</div>'">
+                                <a href="https://westernunion.com" class="project-name">USDPT</a>
+                            </div>
+                            <p class="project-description">Western Union's $150B/yr remittance stablecoin</p>
+                            <div class="project-links">
+                                <a href="https://westernunion.com" class="project-link">westernunion.com</a>
+                                <a href="https://twitter.com/WesternUnion" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Layer 2: Yield & Cash Management -->
+                <div class="ecosystem-layer">
+                    <div class="ecosystem-layer-header">
+                        <h3 class="ecosystem-layer-title">Yield & Cash Management</h3>
+                        <span class="ecosystem-layer-value">$600M+</span>
+                    </div>
+                    <div class="projects-grid">
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=blackrock.com" alt="BlackRock BUIDL" onerror="this.outerHTML='<div class=project-logo>BUIDL</div>'">
+                                <a href="https://blackrock.com" class="project-name">BlackRock BUIDL</a>
+                            </div>
+                            <p class="project-description">World's largest asset manager's tokenized money market fund</p>
+                            <div class="project-links">
+                                <a href="https://blackrock.com" class="project-link">blackrock.com</a>
+                                <a href="https://twitter.com/BlackRock" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=ondo.finance" alt="Ondo" onerror="this.outerHTML='<div class=project-logo>ONDO</div>'">
+                                <a href="https://ondo.finance" class="project-name">Ondo Finance</a>
+                            </div>
+                            <p class="project-description">USDY, OUSG tokenized treasury and bond products</p>
+                            <div class="project-links">
+                                <a href="https://ondo.finance" class="project-link">ondo.finance</a>
+                                <a href="https://twitter.com/OndoFinance" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=franklintempleton.com" alt="Franklin" onerror="this.outerHTML='<div class=project-logo>FRAN</div>'">
+                                <a href="https://franklintempleton.com" class="project-name">Franklin Templeton</a>
+                            </div>
+                            <p class="project-description">BENJI, FOBXX - First US money market fund on public blockchain</p>
+                            <div class="project-links">
+                                <a href="https://franklintempleton.com" class="project-link">franklintempleton.com</a>
+                                <a href="https://twitter.com/FTI_US" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=jito.network" alt="Jito" onerror="this.outerHTML='<div class=project-logo>JITO</div>'">
+                                <a href="https://jito.network" class="project-name">Jito</a>
+                            </div>
+                            <p class="project-description">Liquid staking protocol with MEV rewards</p>
+                            <div class="project-links">
+                                <a href="https://jito.network" class="project-link">jito.network</a>
+                                <a href="https://twitter.com/jito_sol" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=marinade.finance" alt="Marinade" onerror="this.outerHTML='<div class=project-logo>MARI</div>'">
+                                <a href="https://marinade.finance" class="project-name">Marinade</a>
+                            </div>
+                            <p class="project-description">Non-custodial liquid staking for institutional SOL holders</p>
+                            <div class="project-links">
+                                <a href="https://marinade.finance" class="project-link">marinade.finance</a>
+                                <a href="https://twitter.com/MarinadeFinance" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Layer 3: Private Credit -->
+                <div class="ecosystem-layer">
+                    <div class="ecosystem-layer-header">
+                        <h3 class="ecosystem-layer-title">Private Credit & Hedge Funds</h3>
+                        <span class="ecosystem-layer-value">$500M+</span>
+                    </div>
+                    <div class="projects-grid">
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=brevanhoward.com" alt="Brevan Howard" onerror="this.outerHTML='<div class=project-logo>BH</div>'">
+                                <a href="https://brevanhoward.com" class="project-name">Brevan Howard</a>
+                            </div>
+                            <p class="project-description">Tokenized hedge fund positions and credit products</p>
+                            <div class="project-links">
+                                <a href="https://brevanhoward.com" class="project-link">brevanhoward.com</a>
+                                <a href="https://twitter.com/BrevanHoward" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=hamiltonlane.com" alt="Hamilton Lane" onerror="this.outerHTML='<div class=project-logo>HL</div>'">
+                                <a href="https://hamiltonlane.com" class="project-name">Hamilton Lane</a>
+                            </div>
+                            <p class="project-description">Private equity and credit fund tokenization</p>
+                            <div class="project-links">
+                                <a href="https://hamiltonlane.com" class="project-link">hamiltonlane.com</a>
+                                <a href="https://twitter.com/HamiltonLaneInc" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=maple.finance" alt="Maple" onerror="this.outerHTML='<div class=project-logo>MPL</div>'">
+                                <a href="https://maple.finance" class="project-name">Maple Finance</a>
+                            </div>
+                            <p class="project-description">Institutional credit pools and private lending</p>
+                            <div class="project-links">
+                                <a href="https://maple.finance" class="project-link">maple.finance</a>
+                                <a href="https://twitter.com/maplefinance" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=clearpool.finance" alt="Clearpool" onerror="this.outerHTML='<div class=project-logo>CPOOL</div>'">
+                                <a href="https://clearpool.finance" class="project-name">Clearpool</a>
+                            </div>
+                            <p class="project-description">Permissionless credit marketplace for institutions</p>
+                            <div class="project-links">
+                                <a href="https://clearpool.finance" class="project-link">clearpool.finance</a>
+                                <a href="https://twitter.com/ClearpoolFin" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Layer 4: Alternatives & RWA -->
+                <div class="ecosystem-layer">
+                    <div class="ecosystem-layer-header">
+                        <h3 class="ecosystem-layer-title">Alternatives & RWA</h3>
+                        <span class="ecosystem-layer-value">$700M+</span>
+                    </div>
+                    <div class="projects-grid">
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=backed.fi" alt="Backed" onerror="this.outerHTML='<div class=project-logo>BACK</div>'">
+                                <a href="https://backed.fi" class="project-name">Backed/xStocks</a>
+                            </div>
+                            <p class="project-description">Tokenized stocks and ETFs with institutional custody</p>
+                            <div class="project-links">
+                                <a href="https://backed.fi" class="project-link">backed.fi</a>
+                                <a href="https://twitter.com/BackedFi" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=parcl.co" alt="Parcl" onerror="this.outerHTML='<div class=project-logo>PRCL</div>'">
+                                <a href="https://parcl.co" class="project-name">Parcl</a>
+                            </div>
+                            <p class="project-description">Real estate price exposure through synthetic assets</p>
+                            <div class="project-links">
+                                <a href="https://parcl.co" class="project-link">parcl.co</a>
+                                <a href="https://twitter.com/Parcl" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://icons.llama.fi/helium.png" alt="Helium" onerror="this.outerHTML='<div class=project-logo>HNT</div>'">
+                                <a href="https://helium.com" class="project-name">Helium</a>
+                            </div>
+                            <p class="project-description">Decentralized wireless infrastructure and IoT networks</p>
+                            <div class="project-links">
+                                <a href="https://helium.com" class="project-link">helium.com</a>
+                                <a href="https://twitter.com/helium" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=render.com" alt="Render" onerror="this.outerHTML='<div class=project-logo>RNDR</div>'">
+                                <a href="https://render.com" class="project-name">Render</a>
+                            </div>
+                            <p class="project-description">Decentralized GPU compute network for AI and rendering</p>
+                            <div class="project-links">
+                                <a href="https://render.com" class="project-link">render.com</a>
+                                <a href="https://twitter.com/RenderNetwork" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Infrastructure Rail -->
+                <div class="ecosystem-layer" style="background: linear-gradient(135deg, rgba(153, 69, 255, 0.05), rgba(20, 241, 149, 0.05));">
+                    <div class="ecosystem-layer-header">
+                        <h3 class="ecosystem-layer-title">Infrastructure Rail</h3>
+                        <span class="ecosystem-layer-value">Core Infrastructure</span>
+                    </div>
+                    <div class="projects-grid">
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=visa.com" alt="Visa" onerror="this.outerHTML='<div class=project-logo>VISA</div>'">
+                                <a href="https://visa.com" class="project-name">Visa</a>
+                            </div>
+                            <p class="project-description">Second blockchain supported for USDC settlement</p>
+                            <div class="project-links">
+                                <a href="https://visa.com" class="project-link">visa.com</a>
+                                <a href="https://twitter.com/Visa" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=stripe.com" alt="Stripe" onerror="this.outerHTML='<div class=project-logo>STRP</div>'">
+                                <a href="https://stripe.com" class="project-name">Stripe</a>
+                            </div>
+                            <p class="project-description">Payment processing with crypto-to-fiat rails</p>
+                            <div class="project-links">
+                                <a href="https://stripe.com" class="project-link">stripe.com</a>
+                                <a href="https://twitter.com/stripe" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=wormhole.com" alt="Wormhole" onerror="this.outerHTML='<div class=project-logo>W</div>'">
+                                <a href="https://wormhole.com" class="project-name">Wormhole</a>
+                            </div>
+                            <p class="project-description">Cross-chain bridge and messaging protocol</p>
+                            <div class="project-links">
+                                <a href="https://wormhole.com" class="project-link">wormhole.com</a>
+                                <a href="https://twitter.com/wormhole" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <img class="project-logo" src="https://www.google.com/s2/favicons?domain=jupiter.ag" alt="Jupiter" onerror="this.outerHTML='<div class=project-logo>JUP</div>'">
+                                <a href="https://jupiter.ag" class="project-name">Jupiter</a>
+                            </div>
+                            <p class="project-description">Liquidity aggregator and trading infrastructure</p>
+                            <div class="project-links">
+                                <a href="https://jupiter.ag" class="project-link">jupiter.ag</a>
+                                <a href="https://twitter.com/JupiterExchange" class="twitter-link">
+                                    <svg class="twitter-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-        <footer class="footer">
-            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px"><img src="https://upload.wikimedia.org/wikipedia/en/b/b9/Solana_logo.png" alt="Solana" style="height:28px"><span class="footer-logo">SOLANA</span></div>
-            <div class="footer-text">Data as of February 2026</div>
-        </footer>
-    </div>
+    <!-- Case Studies Section -->
+    <section class="section case-studies">
+        <div class="container">
+            <h2 class="section-title">Institutional Case Studies</h2>
+            <p class="section-subtitle">Landmark deployments proving Solana's institutional readiness</p>
+            
+            <div class="cases-grid">
+                <div class="case-card">
+                    <h3 class="case-company">BlackRock BUIDL</h3>
+                    <p class="case-description">World's largest asset manager launched its tokenized money market fund on Solana, bringing institutional-grade treasury management to blockchain. $500M+ in assets under management.</p>
+                </div>
+                
+                <div class="case-card">
+                    <h3 class="case-company">J.P. Morgan</h3>
+                    <p class="case-description">Executed atomic Delivery versus Payment (DvP) settlement of commercial paper against USDC on Solana, demonstrating institutional-grade settlement capabilities.</p>
+                </div>
+                
+                <div class="case-card">
+                    <h3 class="case-company">Western Union</h3>
+                    <p class="case-description">$150 billion per year remittance company chose Solana for USDPT stablecoin, leveraging low fees and fast settlement for cross-border payments.</p>
+                </div>
+                
+                <div class="case-card">
+                    <h3 class="case-company">Visa</h3>
+                    <p class="case-description">Selected Solana as the second blockchain supported for USDC settlement in 2023, joining Ethereum in Visa's crypto payment infrastructure.</p>
+                </div>
+                
+                <div class="case-card">
+                    <h3 class="case-company">Franklin Templeton</h3>
+                    <p class="case-description">First US-registered money market fund deployed on a public blockchain with BENJI and FOBXX, setting precedent for regulated fund tokenization.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section faq">
+        <div class="container">
+            <h2 class="section-title">Common Objections</h2>
+            <p class="section-subtitle">Addressing institutional concerns with data-driven responses</p>
+            
+            <div class="faq-list">
+                <div class="faq-item">
+                    <details>
+                        <summary>Why not a private/permissioned blockchain?</summary>
+                        <div class="faq-answer">
+                            R3 is literally pivoting TO Solana. Building your own chain is like building a private highway to run a delivery fleet — expensive, isolated, and ultimately limited. Solana provides the benefits of a private chain (control, compliance) while maintaining access to $100B+ in public liquidity and composable applications.
+                        </div>
+                    </details>
+                </div>
+                
+                <div class="faq-item">
+                    <details>
+                        <summary>Why not an L2?</summary>
+                        <div class="faq-answer">
+                            L2s create infrastructure burden, bridge risk, liquidity fragmentation, and DoS vulnerabilities. You're building on someone else's roadmap while fragmenting liquidity away from the main ecosystem. Solana's localized fee markets provide L2-like economics without the complexity.
+                        </div>
+                    </details>
+                </div>
+                
+                <div class="faq-item">
+                    <details>
+                        <summary>What about privacy?</summary>
+                        <div class="faq-answer">
+                            Solana offers three layers of privacy: Confidential Transfers for encrypted on-chain balances, Contra for fully private execution, and Solana Noir for zero-knowledge proofs. This provides more privacy options than most enterprise blockchains.
+                        </div>
+                    </details>
+                </div>
+                
+                <div class="faq-item">
+                    <details>
+                        <summary>Can you match competitor grants?</summary>
+                        <div class="faq-answer">
+                            Solana offers the strongest organic ecosystem rather than artificial grant incentives. Short-term grant optimization vs 10-year roadmap — which serves your institutional clients better? Sustainable economics beat temporary subsidies.
+                        </div>
+                    </details>
+                </div>
+                
+                <div class="faq-item">
+                    <details>
+                        <summary>How do we handle KYC?</summary>
+                        <div class="faq-answer">
+                            Token Extensions embed compliance at the protocol level. Transfer Hooks enable real-time KYC/sanctions screening on every transaction. Allowlists ensure only whitelisted addresses can hold tokens. This is compliance by design, not compliance as an afterthought.
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">⬡ Solana</div>
+                <div class="footer-links">
+                    <a href="https://defillama.com" class="footer-link">DeFi Llama</a>
+                    <a href="https://dune.com" class="footer-link">Dune Analytics</a>
+                    <a href="https://rwa.xyz" class="footer-link">RWA.xyz</a>
+                    <a href="https://explorer.solana.com" class="footer-link">Solana Explorer</a>
+                    <a href="https://solana.com" class="footer-link">Solana.com</a>
+                </div>
+            </div>
+            <p class="footer-note">Data as of February 2026 • This page is for informational purposes only and does not constitute investment advice</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Enhanced logo error handling
+        document.querySelectorAll('.project-logo').forEach(logo => {
+            if (logo.tagName === 'IMG') {
+                logo.addEventListener('error', function() {
+                    const projectName = this.alt || 'PROJECT';
+                    const initials = projectName.substring(0, 2).toUpperCase();
+                    this.outerHTML = `<div class="project-logo">${initials}</div>`;
+                });
+            }
+        });
+
+        // Add subtle entrance animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Apply animation to cards
+        document.querySelectorAll('.benefit-card, .layer, .project-card, .case-card, .faq-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
 </body>
 </html>
